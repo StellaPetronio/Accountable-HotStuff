@@ -27,6 +27,7 @@
 #include "salticidae/msg.h"
 #include "hotstuff/util.h"
 #include "hotstuff/consensus.h"
+#include "hotstuff/entity.h"
 
 namespace hotstuff {
 
@@ -37,6 +38,16 @@ using salticidae::_2;
 
 const double ent_waiting_timeout = 10;
 const double double_inf = 1e10;
+
+/** Network message format for Accoutable HotStuff. */
+struct MsgCommitted {
+    static const opcode_t opcode = 0x4;
+    DataStream serialized;
+    Block blk, blk1, blk2;
+    MsgCommitted(const Block &blk, const Block &blk1, const Block &blk2);
+    MsgCommitted(DataStream &&s): serialized(std::move(s)) {}
+    void postponed_parse(HotStuffCore *hsc);
+};
 
 /** Network message format for HotStuff. */
 struct MsgPropose {
@@ -182,6 +193,8 @@ class HotStuffBase: public HotStuffCore {
     void on_fetch_blk(const block_t &blk);
     bool on_deliver_blk(const block_t &blk);
 
+    /** deliver consensus message: <committed> */
+    inline void committed_handler(MsgCommitted &&, const Net::conn_t &);
     /** deliver consensus message: <propose> */
     inline void propose_handler(MsgPropose &&, const Net::conn_t &);
     /** deliver consensus message: <vote> */
@@ -193,10 +206,13 @@ class HotStuffBase: public HotStuffCore {
 
     inline bool conn_handler(const salticidae::ConnPool::conn_t &, bool);
 
+    void do_broadcast_committed(const Block &, const Block &, const Block &);
     void do_broadcast_proposal(const Proposal &) override;
     void do_vote(ReplicaID, const Vote &) override;
     void do_decide(Finality &&) override;
     void do_consensus(const block_t &blk) override;
+
+    void periodical_check();
 
     protected:
 

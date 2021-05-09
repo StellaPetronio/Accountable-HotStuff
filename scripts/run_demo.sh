@@ -2,6 +2,7 @@
 rep=({0..3})
 if [[ $# -gt 0 ]]; then
     rep=($@)
+	echo "jovan"
 fi
 
 # avoid stack overflow as in our simple demo the bootstrapping replica will

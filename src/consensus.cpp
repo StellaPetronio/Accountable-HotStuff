@@ -128,6 +128,7 @@ void HotStuffCore::update(const block_t &nblk) {
     if (blk1->parents[0] != blk) return;
 #endif
     /* otherwise commit */
+
     std::vector<block_t> commit_queue;
     block_t b;
     for (b = blk; b->height > b_exec->height; b = b->parents[0])
@@ -149,6 +150,13 @@ void HotStuffCore::update(const block_t &nblk) {
                                 blk->cmds[i], blk->get_hash()));
     }
     b_exec = blk;
+
+
+    // Accountability TODO
+    // Send blk, blk1, blk2 to all
+    /* broadcast to all replicas, including itself(?) */
+    do_broadcast_committed(blk, blk1, blk2);
+
 }
 
 block_t HotStuffCore::on_propose(const std::vector<uint256_t> &cmds,
@@ -176,7 +184,7 @@ block_t HotStuffCore::on_propose(const std::vector<uint256_t> &cmds,
     /* self-receive the proposal (no need to send it through the network) */
     on_receive_proposal(prop);
     on_propose_(prop);
-    /* boradcast to other replicas */
+    /* broadcast to other replicas */
     do_broadcast_proposal(prop);
     return bnew;
 }
@@ -198,18 +206,18 @@ void HotStuffCore::on_receive_proposal(const Proposal &prop) {
             opinion = true; // liveness condition
             vheight = bnew->height;
         }
-        else
-        {   // safety condition (extend the locked branch)
-            block_t b;
-            for (b = bnew;
-                b->height > b_lock->height;
-                b = b->parents[0]);
-            if (b == b_lock) /* on the same branch */
-            {
-                opinion = true;
-                vheight = bnew->height;
-            }
-        }
+        // else
+        // {   // safety condition (extend the locked branch)
+        //     block_t b;
+        //     for (b = bnew;
+        //         b->height > b_lock->height;
+        //         b = b->parents[0]);
+        //     if (b == b_lock) /* on the same branch */
+        //     {
+        //         opinion = true;
+        //         vheight = bnew->height;
+        //     }
+        // }
     }
     LOG_PROTO("now state: %s", std::string(*this).c_str());
     if (!self_prop && bnew->qc_ref)

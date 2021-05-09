@@ -27,6 +27,14 @@ using salticidae::static_pointer_cast;
 
 namespace hotstuff {
 
+const opcode_t MsgCommitted::opcode;
+MsgCommitted::MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2) {serialized << blk << blk1 << blk2; }
+void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
+    // TODO
+    blk.hsc = blk1.hsc = blk2.hsc = hsc;
+    serialized >> blk >> blk1 >> blk2;
+}
+
 const opcode_t MsgPropose::opcode;
 MsgPropose::MsgPropose(const Proposal &proposal) { serialized << proposal; }
 void MsgPropose::postponed_parse(HotStuffCore *hsc) {
@@ -199,6 +207,21 @@ promise_t HotStuffBase::async_deliver_blk(const uint256_t &blk_hash,
     return static_cast<promise_t &>(pm);
 }
 
+void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
+    LOG_WARN("Committed message received");
+    addBlocksToCommittedBlocks(msg.blk, msg.blk1, msg.blk2);
+    periodicalCheck();
+
+    // also, when you add something to your tree
+    // you invoked periodicalCheck()
+}
+
+// from pseudocode
+void periodicalCheck() {
+
+}
+
+
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
     const PeerId &peer = conn->get_peer_id();
     if (peer.is_null()) return;
@@ -360,6 +383,7 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
         part_delivery_time_max(0)
 {
     /* register the handlers for msg from replicas */
+    pn.reg_handler(salticidae::generic_bind(&HotStuffBase::committed_handler, this, _1, _2))
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::propose_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::vote_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::req_blk_handler, this, _1, _2));
@@ -374,6 +398,10 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
     });
     pn.start();
     pn.listen(listen_addr);
+}
+
+void HotStuffBase::do_broadcast_committed(const block_t &blk, const block_t  &blk1, const block_t  &blk2) {
+    pn.multicast_msg(MsgCommitted(blk, blk1, blk2), peers);
 }
 
 void HotStuffBase::do_broadcast_proposal(const Proposal &prop) {

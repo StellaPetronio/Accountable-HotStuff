@@ -134,6 +134,9 @@ class Block {
 
     std::unordered_set<ReplicaID> voted;
 
+    HotStuffCore *hsc;
+
+
     public:
     Block():
         qc(nullptr),
