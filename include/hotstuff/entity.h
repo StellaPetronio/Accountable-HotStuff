@@ -134,9 +134,6 @@ class Block {
 
     std::unordered_set<ReplicaID> voted;
 
-    HotStuffCore *hsc;
-
-
     public:
     Block():
         qc(nullptr),
@@ -171,6 +168,8 @@ class Block {
             delivered(0),
             decision(decision) {}
 
+    HotStuffCore *hsc;
+    
     void serialize(DataStream &s) const;
 
     void unserialize(DataStream &s, HotStuffCore *hsc);
