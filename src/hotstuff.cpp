@@ -28,10 +28,12 @@ using salticidae::static_pointer_cast;
 namespace hotstuff {
 
 const opcode_t MsgCommitted::opcode;
-MsgCommitted::MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2) {serialized << blk << blk1 << blk2; }
+MsgCommitted::MsgCommitted(const Block &blk, const Block &blk1, const Block &blk2) {serialized << blk << blk1 << blk2; }
 void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
     // TODO
-    blk.hsc = blk1.hsc = blk2.hsc = hsc;
+    blk.hsc = hsc;
+    blk1.hsc = hsc;
+    blk2.hsc = hsc;
     serialized >> blk >> blk1 >> blk2;
 }
 
@@ -383,7 +385,7 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
         part_delivery_time_max(0)
 {
     /* register the handlers for msg from replicas */
-    pn.reg_handler(salticidae::generic_bind(&HotStuffBase::committed_handler, this, _1, _2))
+    pn.reg_handler(salticidae::generic_bind(&HotStuffBase::committed_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::propose_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::vote_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::req_blk_handler, this, _1, _2));
