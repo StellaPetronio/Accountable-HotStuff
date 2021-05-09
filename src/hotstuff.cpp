@@ -28,7 +28,7 @@ using salticidae::static_pointer_cast;
 namespace hotstuff {
 
 const opcode_t MsgCommitted::opcode;
-MsgCommitted::MsgCommitted(const Block &blk, const Block &blk1, const Block &blk2) {serialized << blk << blk1 << blk2; }
+MsgCommitted::MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2) {serialized << blk << blk1 << blk2; }
 void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
     // TODO
     blk.hsc = hsc;
