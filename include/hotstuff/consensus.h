@@ -50,6 +50,7 @@ class HotStuffCore {
     /* === async event queues === */
     std::unordered_map<block_t, promise_t> qc_waiting;
     promise_t propose_waiting;
+    promise_t receive_chain_waiting;
     promise_t receive_proposal_waiting;
     promise_t hqc_update_waiting;
     /* == feature switches == */
@@ -64,6 +65,7 @@ class HotStuffCore {
     void on_qc_finish(const block_t &blk);
     void on_propose_(const Proposal &prop);
     void on_receive_proposal_(const Proposal &prop);
+    void on_receive_chain_(const ChainCommitted &chian);
 
     protected:
     ReplicaID id;                  /**< identity of the replica itself */
@@ -162,6 +164,8 @@ class HotStuffCore {
     promise_t async_wait_receive_proposal();
     /** Get a promise resolved when hqc is updated. */
     promise_t async_hqc_update();
+
+    promise_t async_wait_receive_chain();
 
     /* Other useful functions */
     const block_t &get_genesis() const { return b0; }
