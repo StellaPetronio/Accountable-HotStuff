@@ -217,6 +217,7 @@ promise_t HotStuffBase::async_deliver_blk(const uint256_t &blk_hash,
 }
 
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
+    LOG_WARN("Committed message received");
     /*LOG_WARN("Committed message received");
     addBlocksToCommittedBlocks(msg.blk, msg.blk1, msg.blk2);
     periodicalCheck();
@@ -227,7 +228,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 
 // from pseudocode
 void periodicalCheck() {
-
+    return;
 }
 
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
