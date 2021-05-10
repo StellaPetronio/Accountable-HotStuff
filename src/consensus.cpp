@@ -156,6 +156,7 @@ void HotStuffCore::update(const block_t &nblk) {
     // Send blk, blk1, blk2 to all
     /* broadcast to all replicas, including itself(?) */
     ChainCommitted chain(blk, blk1, blk2, nullptr, nullptr, nullptr);
+    on_receive_chain(chain);
     do_broadcast_committed(chain);
 
 }
