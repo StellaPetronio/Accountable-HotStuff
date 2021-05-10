@@ -127,7 +127,7 @@ class HotStuffCore {
     virtual void do_vote(ReplicaID last_proposer, const Vote &vote) = 0;
 
     /*for accountable*/
-    virtual void do_broadcast_commited(const ChainCommitted &chain) = 0;
+    virtual void do_broadcast_committed(const ChainCommitted &chain) = 0;
 
     /* The user plugs in the detailed instances for those
      * polymorphic data types. */
