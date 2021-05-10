@@ -94,7 +94,7 @@ class HotStuffCore {
      * @return true if valid */
     bool on_deliver_blk(const block_t &blk);
 
-    //void on_receive_chain(const ChainCommitted &chain);
+    void on_receive_chain(const ChainCommitted &chain);
 
     /** Call upon the delivery of a proposal message.
      * The block mentioned in the message should be already delivered. */
