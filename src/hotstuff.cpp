@@ -217,10 +217,10 @@ promise_t HotStuffBase::async_deliver_blk(const uint256_t &blk_hash,
 }
 
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
-    LOG_WARN("Committed message received");
+    /*LOG_WARN("Committed message received");
     addBlocksToCommittedBlocks(msg.blk, msg.blk1, msg.blk2);
     periodicalCheck();
-
+*/
     // also, when you add something to your tree
     // you invoked periodicalCheck()
 }
@@ -229,7 +229,6 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 void periodicalCheck() {
 
 }
-
 
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
     const PeerId &peer = conn->get_peer_id();
@@ -409,8 +408,8 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
     pn.listen(listen_addr);
 }
 
-void HotStuffBase::do_broadcast_committed(const block_t &blk, const block_t  &blk1, const block_t  &blk2) {
-    pn.multicast_msg(MsgCommitted(blk, blk1, blk2), peers);
+void HotStuffBase::do_broadcast_committed(const ChainCommited &chain) {
+    pn.multicast_msg(MsgCommitted(chain), peers);
 }
 
 void HotStuffBase::do_broadcast_proposal(const Proposal &prop) {
