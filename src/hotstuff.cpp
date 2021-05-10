@@ -408,7 +408,7 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
     pn.listen(listen_addr);
 }
 
-void HotStuffBase::do_broadcast_committed(const ChainCommited &chain) {
+void HotStuffBase::do_broadcast_committed(const ChainCommitted &chain) {
     pn.multicast_msg(MsgCommitted(chain), peers);
 }
 
