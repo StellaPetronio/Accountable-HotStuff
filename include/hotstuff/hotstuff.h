@@ -43,10 +43,10 @@ const double double_inf = 1e10;
 struct MsgCommitted {
     static const opcode_t opcode = 0x4;
     DataStream serialized;
-    block_t blk, blk1, blk2;
-    MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2);
+    ChainCommitted chain;
+    MsgCommitted(const ChainCommitted &chain);
     MsgCommitted(DataStream &&s): serialized(std::move(s)) {}
-    //void postponed_parse(HotStuffCore *hsc);
+    void postponed_parse(HotStuffCore *hsc);
 };
 
 /** Network message format for HotStuff. */
@@ -206,7 +206,7 @@ class HotStuffBase: public HotStuffCore {
 
     inline bool conn_handler(const salticidae::ConnPool::conn_t &, bool);
 
-    void do_broadcast_committed(const block_t &, const block_t &, const block_t &);
+    void do_broadcast_committed(const ChainCommitted &) override;
     void do_broadcast_proposal(const Proposal &) override;
     void do_vote(ReplicaID, const Vote &) override;
     void do_decide(Finality &&) override;

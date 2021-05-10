@@ -32,6 +32,7 @@ namespace hotstuff {
 struct Proposal;
 struct Vote;
 struct Finality;
+struct ChainCommitted;
 
 /** Abstraction for HotStuff protocol state machine (without network implementation). */
 class HotStuffCore {
@@ -125,6 +126,9 @@ class HotStuffCore {
      * while safety is always guaranteed by HotStuffCore. */
     virtual void do_vote(ReplicaID last_proposer, const Vote &vote) = 0;
 
+    /*for accountable*/
+    virtual void do_broadcast_commited(const ChainCommitted &chain) = 0;
+
     /* The user plugs in the detailed instances for those
      * polymorphic data types. */
     public:
@@ -166,6 +170,61 @@ class HotStuffCore {
     operator std::string () const;
     void set_vote_disabled(bool f) { vote_disabled = f; }
 };
+
+/** Abstraction for chain committed. */
+struct ChainCommitted: public Serializable {
+    ReplicaID proposer;
+    /** chain being commited */
+    block_t blk;
+    block_t blk1;
+    block_t blk2;
+    /** handle of the core object to allow polymorphism. The user should use
+     * a pointer to the object of the class derived from HotStuffCore */
+    HotStuffCore *hsc;
+    HotStuffCore *hsc1;
+    HotStuffCore *hsc2;
+
+    ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr), hsc1(nullptr), hsc2(nullptr) {}
+    ChainCommitted(ReplicaID proposer,
+            const block_t &blk, const block_t &blk1, const block_t &blk2,
+            HotStuffCore *hsc, HotStuffCore *hsc1, HotStuffCore *hsc2):
+        proposer(proposer),
+        blk(blk), blk1(blk1), blk2(blk2), hsc(hsc), hsc1(hsc1), hsc2(hsc2) {}
+
+    void serialize(DataStream &s) const override {
+        s << proposer
+          << *blk
+          << *blk1
+          << *blk2;
+    }
+
+    void unserialize(DataStream &s) override {
+        assert(hsc != nullptr);
+        assert(hsc1 != nullptr);
+        assert(hsc2 != nullptr);
+        s >> proposer;
+        Block _blk;
+        Block _blk1;
+        Block _blk2;
+        _blk.unserialize(s, hsc);
+        _blk1.unserialize(s, hsc1);
+        _blk2.unserialize(s, hsc2);
+        blk = hsc->storage->add_blk(std::move(_blk), hsc->get_config());
+        blk1 = hsc1->storage->add_blk(std::move(_blk1), hsc1->get_config());
+        blk2 = hsc2->storage->add_blk(std::move(_blk2), hsc2->get_config());
+    }
+
+    operator std::string () const {
+        DataStream s;
+        s << "<Chain committed"
+          << "rid=" << std::to_string(proposer) << " "
+          << "blk=" << get_hex10(blk->get_hash()) << " "
+          << "blk1=" << get_hex10(blk1->get_hash()) << " "
+          << "blk2=" << get_hex10(blk2->get_hash()) << ">";
+        return s;
+    }
+};
+
 
 /** Abstraction for proposal messages. */
 struct Proposal: public Serializable {
