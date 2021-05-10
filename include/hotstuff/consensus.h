@@ -173,7 +173,6 @@ class HotStuffCore {
 
 /** Abstraction for chain committed. */
 struct ChainCommitted: public Serializable {
-    ReplicaID proposer;
     /** chain being commited */
     block_t blk;
     block_t blk1;
@@ -185,24 +184,27 @@ struct ChainCommitted: public Serializable {
     HotStuffCore *hsc2;
 
     ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr), hsc1(nullptr), hsc2(nullptr) {}
-    ChainCommitted(ReplicaID proposer,
-            const block_t &blk, const block_t &blk1, const block_t &blk2,
+    ChainCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2,
             HotStuffCore *hsc, HotStuffCore *hsc1, HotStuffCore *hsc2):
-        proposer(proposer),
         blk(blk), blk1(blk1), blk2(blk2), hsc(hsc), hsc1(hsc1), hsc2(hsc2) {}
 
     void serialize(DataStream &s) const override {
-        s << proposer
+         s << *blk
+           << *blk1
+           << *blk2;
+
+        /*s << proposer
           << *blk
           << *blk1
           << *blk2;
+        */
     }
 
     void unserialize(DataStream &s) override {
         assert(hsc != nullptr);
         assert(hsc1 != nullptr);
         assert(hsc2 != nullptr);
-        s >> proposer;
+        //s >> proposer;
         Block _blk;
         Block _blk1;
         Block _blk2;
@@ -217,7 +219,6 @@ struct ChainCommitted: public Serializable {
     operator std::string () const {
         DataStream s;
         s << "<Chain committed"
-          << "rid=" << std::to_string(proposer) << " "
           << "blk=" << get_hex10(blk->get_hash()) << " "
           << "blk1=" << get_hex10(blk1->get_hash()) << " "
           << "blk2=" << get_hex10(blk2->get_hash()) << ">";
