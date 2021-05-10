@@ -92,6 +92,8 @@ class HotStuffCore {
      * @return true if valid */
     bool on_deliver_blk(const block_t &blk);
 
+    //void on_receive_chain(const ChainCommitted &chain);
+
     /** Call upon the delivery of a proposal message.
      * The block mentioned in the message should be already delivered. */
     void on_receive_proposal(const Proposal &prop);
@@ -174,14 +176,10 @@ class HotStuffCore {
 /** Abstraction for chain committed. */
 struct ChainCommitted: public Serializable {
     /** chain being commited */
-    block_t blk;
-    block_t blk1;
-    block_t blk2;
+    block_t blk, blk1, blk2;
     /** handle of the core object to allow polymorphism. The user should use
      * a pointer to the object of the class derived from HotStuffCore */
-    HotStuffCore *hsc;
-    HotStuffCore *hsc1;
-    HotStuffCore *hsc2;
+    HotStuffCore *hsc, *hsc1, *hsc2;
 
     ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr), hsc1(nullptr), hsc2(nullptr) {}
     ChainCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2,
@@ -199,9 +197,7 @@ struct ChainCommitted: public Serializable {
         assert(hsc1 != nullptr);
         assert(hsc2 != nullptr);
         //s >> proposer;
-        Block _blk;
-        Block _blk1;
-        Block _blk2;
+        Block _blk, _blk1, _blk2;
         _blk.unserialize(s, hsc);
         _blk1.unserialize(s, hsc1);
         _blk2.unserialize(s, hsc2);
