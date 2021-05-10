@@ -154,10 +154,11 @@ void HotStuffCore::update(const block_t &nblk) {
 
     // Accountability TODO
     // Send blk, blk1, blk2 to all
-    /* broadcast to all replicas, including itself(?) */
+    //create the chain
     ChainCommitted chain(blk, blk1, blk2, nullptr, nullptr, nullptr);
-    //on_receive_chain(chain);
-    LOG_PROTO("got %s", std::string(chain).c_str());
+    on_receive_chain(chain);
+    on_receive_chain_(chain);
+    /* broadcast to all replicas, including itself(?) */
     do_broadcast_committed(chain);
 
 }
@@ -192,11 +193,11 @@ block_t HotStuffCore::on_propose(const std::vector<uint256_t> &cmds,
     return bnew;
 }
 
-/*
+
 void HotStuffCore::on_receive_chain(const ChainCommitted &chain){
     LOG_PROTO("got %s", std::string(chain).c_str());
 }
-*/
+
 
 void HotStuffCore::on_receive_proposal(const Proposal &prop) {
     LOG_PROTO("got %s", std::string(prop).c_str());
@@ -336,6 +337,12 @@ promise_t HotStuffCore::async_wait_receive_proposal() {
     });
 }
 
+promise_t HotStuffCore::async_wait_receive_chain() {
+    return receive_chain_waiting.then([](const ChainCommitted &chain) {
+        return chain;
+    });
+}
+
 promise_t HotStuffCore::async_hqc_update() {
     return hqc_update_waiting.then([this]() {
         return hqc.first;
@@ -352,6 +359,12 @@ void HotStuffCore::on_receive_proposal_(const Proposal &prop) {
     auto t = std::move(receive_proposal_waiting);
     receive_proposal_waiting = promise_t();
     t.resolve(prop);
+}
+
+void HotStuffCore::on_receive_chain_(const ChainCommitted &chain) {
+    auto t = std::move(receive_chain_waiting;);
+    receive_chain_waiting; = promise_t();
+    t.resolve(chian);
 }
 
 void HotStuffCore::on_hqc_update() {
