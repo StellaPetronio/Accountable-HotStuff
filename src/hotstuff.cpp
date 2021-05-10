@@ -29,13 +29,13 @@ namespace hotstuff {
 
 const opcode_t MsgCommitted::opcode;
 MsgCommitted::MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2) {serialized << blk << blk1 << blk2; }
-void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
+/*void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
     // TODO
     blk.hsc = hsc;
     blk1.hsc = hsc;
     blk2.hsc = hsc;
     serialized >> blk >> blk1 >> blk2;
-}
+}*/
 
 const opcode_t MsgPropose::opcode;
 MsgPropose::MsgPropose(const Proposal &proposal) { serialized << proposal; }

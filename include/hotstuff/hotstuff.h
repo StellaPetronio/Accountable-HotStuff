@@ -46,7 +46,7 @@ struct MsgCommitted {
     block_t blk, blk1, blk2;
     MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2);
     MsgCommitted(DataStream &&s): serialized(std::move(s)) {}
-    void postponed_parse(HotStuffCore *hsc);
+    //void postponed_parse(HotStuffCore *hsc);
 };
 
 /** Network message format for HotStuff. */
