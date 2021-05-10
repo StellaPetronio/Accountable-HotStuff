@@ -155,11 +155,10 @@ void HotStuffCore::update(const block_t &nblk) {
     // Accountability TODO
     // Send blk, blk1, blk2 to all
     //create the chain
-    //ChainCommitted chain(blk, blk1, blk2, nullptr, nullptr, nullptr);
-    //on_receive_chain(chain);
+    ChainCommitted chain(blk, blk1, blk2, nullptr, nullptr, nullptr);
+    on_receive_chain(chain);
     /* broadcast to all replicas, including itself(?) */
-    //do_broadcast_committed(chain);
-
+    do_broadcast_committed(chain);
 }
 
 block_t HotStuffCore::on_propose(const std::vector<uint256_t> &cmds,
@@ -216,18 +215,18 @@ void HotStuffCore::on_receive_proposal(const Proposal &prop) {
             opinion = true; // liveness condition
             vheight = bnew->height;
         }
-        // else
-        // {   // safety condition (extend the locked branch)
-        //     block_t b;
-        //     for (b = bnew;
-        //         b->height > b_lock->height;
-        //         b = b->parents[0]);
-        //     if (b == b_lock) /* on the same branch */
-        //     {
-        //         opinion = true;
-        //         vheight = bnew->height;
-        //     }
-        // }
+        else
+        {   // safety condition (extend the locked branch)
+            block_t b;
+            for (b = bnew;
+                b->height > b_lock->height;
+                b = b->parents[0]);
+            if (b == b_lock) /* on the same branch */
+            {
+                opinion = true;
+                vheight = bnew->height;
+            }
+        }
     }
     LOG_PROTO("now state: %s", std::string(*this).c_str());
     if (!self_prop && bnew->qc_ref)
