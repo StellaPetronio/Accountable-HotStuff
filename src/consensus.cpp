@@ -156,7 +156,8 @@ void HotStuffCore::update(const block_t &nblk) {
     // Send blk, blk1, blk2 to all
     /* broadcast to all replicas, including itself(?) */
     ChainCommitted chain(blk, blk1, blk2, nullptr, nullptr, nullptr);
-    on_receive_chain(chain);
+    //on_receive_chain(chain);
+    LOG_PROTO("got %s", std::string(chain).c_str());
     do_broadcast_committed(chain);
 
 }
@@ -191,9 +192,11 @@ block_t HotStuffCore::on_propose(const std::vector<uint256_t> &cmds,
     return bnew;
 }
 
+/*
 void HotStuffCore::on_receive_chain(const ChainCommitted &chain){
     LOG_PROTO("got %s", std::string(chain).c_str());
 }
+*/
 
 void HotStuffCore::on_receive_proposal(const Proposal &prop) {
     LOG_PROTO("got %s", std::string(prop).c_str());
