@@ -229,7 +229,7 @@ bool HotStuffBase::conflicting(const block_t &blk, const block_t &blk_){
 
 bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
     bool invalid = false;
-    if((blk->get_height() > blk_->get_height()) && (blk->parents[0]->get_height() < (blk_->get_height() - 2))){
+    if((blk->get_height() > blk_->get_height()) && (b->get_parents()->parents[0]->get_height() < (blk_->get_height() - 2))){
         invalid = true;
         return invalid;
     }
@@ -267,7 +267,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 
     std::vector<block_t> commit_tree;
     block_t b;
-    for (b = blk; b->get_height() > b_exec->get_height(); b = b->&get_parents()->parents[0])
+    for (b = blk; b->get_height() > get_b_exec()->get_height(); b = b->get_parents()->parents[0])
     {
         commit_tree.push_back(b);
     }
