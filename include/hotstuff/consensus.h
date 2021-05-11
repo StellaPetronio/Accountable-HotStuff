@@ -169,6 +169,7 @@ class HotStuffCore {
 
     /* Other useful functions */
     const block_t &get_genesis() const { return b0; }
+    const block_t &get_b_exec() const { return b_exec; }
     const block_t &get_hqc() { return hqc.first; }
     const ReplicaConfig &get_config() const { return config; }
     ReplicaID get_id() const { return id; }
