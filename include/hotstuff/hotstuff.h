@@ -212,7 +212,11 @@ class HotStuffBase: public HotStuffCore {
     void do_decide(Finality &&) override;
     void do_consensus(const block_t &blk) override;
 
-    void periodical_check();
+    bool conflicting(const block_t &blk, const block_t &blk_);
+    bool invalid_unlocking(const block_t &blk, const block_t &blk_);
+
+    void periodicalCheck_conflicting(const std::vector<block_t> &tree);
+    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::unordered_map<std::string, block_t> &map);
 
     protected:
 

@@ -212,7 +212,7 @@ struct ChainCommitted: public Serializable {
 
     operator std::string () const {
         DataStream s;
-        s << "<Chain"
+        s << "<Chain "
           << "blk=" << get_hex10(blk->get_hash()) << " "
           << "blk1=" << get_hex10(blk1->get_hash()) << " "
           << "blk2=" << get_hex10(blk2->get_hash()) << ">";
