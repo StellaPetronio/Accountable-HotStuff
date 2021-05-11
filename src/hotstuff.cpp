@@ -273,7 +273,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     }
 
     std::vector<block_t> total_tree;
-    total_tree.insert(commit_tree.begin(), commit_tree.end());
+    copy(commit_tree.begin(), commit_tree.end(), back_inserter(total_tree));
     for(auto x : chain_vec){
         total_tree.push_back(x);
     }
@@ -301,7 +301,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree)
 
 void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::vector<block_t> &chian_vec){
     for(auto i : tree){
-        for(auto j : chain_vec){
+        for(auto j : chian_vec){
             if(invalid_unlocking(i, j)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find an invalid unlocking: calculate the proof of culpability");
