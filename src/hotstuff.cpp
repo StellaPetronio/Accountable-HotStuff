@@ -229,7 +229,7 @@ bool HotStuffBase::conflicting(const block_t &blk, const block_t &blk_){
 
 bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
     bool invalid = false;
-    if((blk->get_height() > blk_->get_height()) && (b->get_parents()->parents[0]->get_height() < (blk_->get_height() - 2))){
+    if((blk->get_height() > blk_->get_height()) && (blk->get_parents()->parents[0]->get_height() < (blk_->get_height() - 2))){
         invalid = true;
         return invalid;
     }
