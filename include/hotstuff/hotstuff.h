@@ -216,7 +216,7 @@ class HotStuffBase: public HotStuffCore {
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
     void periodicalCheck_conflicting(const std::vector<block_t> &tree);
-    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::unordered_map<std::string, block_t> &map);
+    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::vector<block_t> &chain_vec);
 
     protected:
 
