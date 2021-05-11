@@ -241,6 +241,10 @@ bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
 
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
     LOG_INFO("Committed message received");
+    
+    const PeerId &peer = conn->get_peer_id();
+    if (peer.is_null()) return;
+    msg.postponed_parse(this);
 
     /*LOG_WARN("Committed message received");
     addBlocksToCommittedBlocks(msg.blk, msg.blk1, msg.blk2);
@@ -315,7 +319,6 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> 
         }
     }
 }
-
 
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
     const PeerId &peer = conn->get_peer_id();
