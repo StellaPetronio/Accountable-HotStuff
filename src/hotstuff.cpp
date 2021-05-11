@@ -218,7 +218,7 @@ promise_t HotStuffBase::async_deliver_blk(const uint256_t &blk_hash,
 
 bool HotStuffBase::conflicting(const block_t &blk, const block_t &blk_){
     bool conflict = false;
-    if((blk->height == blk_->height) && (blk != blk_)){
+    if((blk->get_height() == blk_->get_height()) && (blk != blk_)){
         conflict = true;
         return conflict;
     }
@@ -229,7 +229,7 @@ bool HotStuffBase::conflicting(const block_t &blk, const block_t &blk_){
 
 bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
     bool invalid = false;
-    if((blk->height > blk_->height) && (blk->parents[0]->height < (blk_->height - 2))){
+    if((blk->get_height() > blk_->get_height()) && (blk->parents[0]->get_height() < (blk_->get_height() - 2))){
         invalid = true;
         return invalid;
     }
@@ -249,30 +249,37 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     // you invoked periodicalCheck()
 
     //to save the MsgCommitted
-    std::unordered_map<std::string, block_t> map;
-    map["blk"] = msg->chain->blk;
-    map["blk1"] = msg->chain->blk1;
-    map["blk2"] = msg->chain->blk2;
+    std::vector<block_t> chain_vec;
+    auto &chain_ = msg.chain;
+    block_t blk = chain_.blk;
+    block_t blk1 = chain_.blk1;
+    block_t blk2 = chain_.blk2;
+    chain_vec.push_back(blk);
+    chain_vec.push_back(blk1);
+    chain_vec.push_back(blk2);
+    //map["blk"] = msg->chain->blk;
+    //map["blk1"] = msg->chain->blk1;
+    //map["blk2"] = msg->chain->blk2;
 
-    for(auto x : map) {
-        cout << x.first << " " << x.second << endl;
-    }
+    //for(auto x : map) {
+    //    cout << x.first << " " << x.second << endl;
+    //}
 
     std::vector<block_t> commit_tree;
     block_t b;
-    for (b = msg->chain->blk; b->height > b_exec->height; b = b->parents[0])
+    for (b = blk; b->get_height() > b_exec->get_height(); b = b->parents[0])
     {
         commit_tree.push_back(b);
     }
 
     std::vector<block_t> total_tree;
     total_tree.push_back(commit_tree);
-    for(auto x : map){
-        total_tree.push_back(x.second);
+    for(auto x : chain_vec){
+        total_tree.push_back(x);
     }
     periodicalCheck_conflicting(total_tree);
-    
-    periodicalCheck_invalid_unlocking(commit_tree, map);
+
+    periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
 
 }
 
@@ -292,10 +299,10 @@ void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree)
     }
 }
 
-void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::unordered_map<std::string, block_t> &map){
-    for(size_t i = 0; i < tree.size(); i++){
-        for(auto j : map){
-            if(invalid_unlocking(tree[i], j.second)){
+void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::vector<block_t> &chian_vec){
+    for(auto i : tree){
+        for(auto j : chain_vec){
+            if(invalid_unlocking(i, j)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find an invalid unlocking: calculate the proof of culpability");
                 return;
