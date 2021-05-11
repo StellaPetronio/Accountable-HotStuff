@@ -267,13 +267,13 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 
     std::vector<block_t> commit_tree;
     block_t b;
-    for (b = blk; b->get_height() > b_exec->get_height(); b = b->parents[0])
+    for (b = blk; b->get_height() > b_exec->get_height(); b = b->&get_parents()->parents[0])
     {
         commit_tree.push_back(b);
     }
 
     std::vector<block_t> total_tree;
-    total_tree.push_back(commit_tree);
+    total_tree.insert(commit_tree.begin(), commit_tree.end());
     for(auto x : chain_vec){
         total_tree.push_back(x);
     }
@@ -293,7 +293,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree)
                 return;
             }
             else{
-                LOG_PROTO("Everything is fine!");
+                LOG_INFO("Everything is fine!");
             } 
         }
     }
@@ -308,7 +308,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> 
                 return;
             }
             else{
-                LOG_PROTO("Everything is fine!");
+                LOG_INFO("Everything is fine!");
             }
         }
     }
