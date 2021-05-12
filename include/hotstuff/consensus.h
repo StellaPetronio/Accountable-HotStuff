@@ -184,7 +184,6 @@ struct ChainCommitted: public Serializable {
     block_t blk, blk1, blk2;
     /** handle of the core object to allow polymorphism. The user should use
      * a pointer to the object of the class derived from HotStuffCore */
-    //HotStuffCore *hsc, *hsc1, *hsc2;
     HotStuffCore *hsc;
 
     ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr){}
@@ -200,9 +199,6 @@ struct ChainCommitted: public Serializable {
 
     void unserialize(DataStream &s) override {
         assert(hsc != nullptr);
-        //assert(hsc1 != nullptr);
-        //assert(hsc2 != nullptr);
-        //s >> proposer;
         Block _blk, _blk1, _blk2;
         _blk.unserialize(s, hsc);
         _blk1.unserialize(s, hsc);

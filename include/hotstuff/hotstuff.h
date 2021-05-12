@@ -193,8 +193,9 @@ class HotStuffBase: public HotStuffCore {
     void on_fetch_blk(const block_t &blk);
     bool on_deliver_blk(const block_t &blk);
 
-    /** deliver consensus message: <committed> */
+    /** for accountability: deliver consensus message: <committed> */
     inline void committed_handler(MsgCommitted &&, const Net::conn_t &);
+
     /** deliver consensus message: <propose> */
     inline void propose_handler(MsgPropose &&, const Net::conn_t &);
     /** deliver consensus message: <vote> */
@@ -206,17 +207,19 @@ class HotStuffBase: public HotStuffCore {
 
     inline bool conn_handler(const salticidae::ConnPool::conn_t &, bool);
 
-    void do_broadcast_committed(const ChainCommitted &) override;
     void do_broadcast_proposal(const Proposal &) override;
     void do_vote(ReplicaID, const Vote &) override;
     void do_decide(Finality &&) override;
     void do_consensus(const block_t &blk) override;
 
+     /* For accountability */
+    void do_broadcast_committed(const ChainCommitted &) override;
+
     bool conflicting(const block_t &blk, const block_t &blk_);
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
-    void periodicalCheck_conflicting(const std::vector<block_t> &tree);
-    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::vector<block_t> &chain_vec);
+    void periodicalCheck_conflicting(const std::vector<block_t> &);
+    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &, const std::vector<block_t> &);
 
     protected:
 
