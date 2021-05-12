@@ -20,7 +20,6 @@
 #include <memory>
 #include <signal.h>
 #include <sys/time.h>
-#include <cstdio>
 
 #include "salticidae/type.h"
 #include "salticidae/netaddr.h"
@@ -110,8 +109,7 @@ void client_resp_cmd_handler(MsgRespCmd &&msg, const Net::conn_t &) {
     elapsed.push_back(std::make_pair(tv, et.elapsed_sec));
 #endif
     waiting.erase(it);
-    //while (try_send());
-    while(try_send()) fgetc(stdin);
+    while (try_send());
 }
 
 std::pair<std::string, std::string> split_ip_port_cport(const std::string &s) {
