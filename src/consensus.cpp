@@ -209,7 +209,7 @@ void HotStuffCore::on_receive_proposal(const Proposal &prop) {
     bool opinion = false;
     if (bnew->height > vheight)
     {
-        if (bnew->qc_ref && bnew->qc_ref->height > b_lock->height)
+        if (bnew->qc_ref && bnew->qc_ref->height >= b_lock->height)
         {
             opinion = true; // liveness condition
             vheight = bnew->height;
