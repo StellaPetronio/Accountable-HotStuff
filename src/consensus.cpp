@@ -214,18 +214,18 @@ void HotStuffCore::on_receive_proposal(const Proposal &prop) {
             opinion = true; // liveness condition
             vheight = bnew->height;
         }
-        else
-        {   // safety condition (extend the locked branch)
-            block_t b;
-            for (b = bnew;
-                b->height > b_lock->height;
-                b = b->parents[0]);
-            if (b == b_lock) /* on the same branch */
-            {
-                opinion = true;
-                vheight = bnew->height;
-            }
-        }
+        // else
+        // {   // safety condition (extend the locked branch)
+        //     block_t b;
+        //     for (b = bnew;
+        //         b->height > b_lock->height;
+        //         b = b->parents[0]);
+        //     if (b == b_lock) /* on the same branch */
+        //     {
+        //         opinion = true;
+        //         vheight = bnew->height;
+        //     }
+        // }
     }
     LOG_PROTO("now state: %s", std::string(*this).c_str());
     if (!self_prop && bnew->qc_ref)
