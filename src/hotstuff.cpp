@@ -34,16 +34,6 @@ void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
     serialized >> chain;
 }
 
-/*
-MsgCommitted::MsgCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2) {serialized << blk << blk1 << blk2; }
-void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
-    // TODO
-    blk.hsc = hsc;
-    blk1.hsc = hsc;
-    blk2.hsc = hsc;
-    serialized >> blk >> blk1 >> blk2;
-}*/
-
 const opcode_t MsgPropose::opcode;
 MsgPropose::MsgPropose(const Proposal &proposal) { serialized << proposal; }
 void MsgPropose::postponed_parse(HotStuffCore *hsc) {
@@ -246,14 +236,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     if (peer.is_null()) return;
     msg.postponed_parse(this);
 
-    /*LOG_WARN("Committed message received");
-    addBlocksToCommittedBlocks(msg.blk, msg.blk1, msg.blk2);
-    periodicalCheck();
-*/
-    // also, when you add something to your tree
-    // you invoked periodicalCheck()
-
-    //to save the MsgCommitted
+    //Save the blks present in the MsgCommitted into a vector
     std::vector<block_t> chain_vec;
     auto &chain_ = msg.chain;
     block_t blk = chain_.blk;
@@ -262,18 +245,12 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     chain_vec.push_back(blk);
     chain_vec.push_back(blk1);
     chain_vec.push_back(blk2);
-    //map["blk"] = msg->chain->blk;
-    //map["blk1"] = msg->chain->blk1;
-    //map["blk2"] = msg->chain->blk2;
 
-    //for(auto x : map) {
-    //    cout << x.first << " " << x.second << endl;
-    //}
-
+    //Save in commit_tree 
     std::vector<block_t> commit_tree;
     block_t b;
     std::vector<block_t> parents_ = blk->get_parents();
-    for (b = blk; b->get_height() > get_b_exec()->get_height(); b = parents_[0])
+    for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_.size())
     {
         commit_tree.push_back(b);
     }
@@ -283,19 +260,19 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     for(auto x : chain_vec){
         total_tree.push_back(x);
     }
+    
     periodicalCheck_conflicting(total_tree);
 
     periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
 
 }
 
-// from pseudocode
 void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree) {
     for(size_t i = 0; i < tree.size(); i++){
         for(size_t j = 1; j < tree.size(); j++){
             if(conflicting(tree[i],tree[j])){
                 //calculate the proof of culpability 
-                LOG_WARN("Find a conflict: calculate the proof of culpability");
+                LOG_WARN("Find a conflict!");
                 return;
             }
             else{
@@ -310,7 +287,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> 
         for(auto j : chian_vec){
             if(invalid_unlocking(i, j)){
                 //calculate the proof of culpability 
-                LOG_WARN("Find an invalid unlocking: calculate the proof of culpability");
+                LOG_WARN("Find an invalid unlocking!");
                 return;
             }
             else{
