@@ -184,12 +184,13 @@ struct ChainCommitted: public Serializable {
     block_t blk, blk1, blk2;
     /** handle of the core object to allow polymorphism. The user should use
      * a pointer to the object of the class derived from HotStuffCore */
-    HotStuffCore *hsc, *hsc1, *hsc2;
+    //HotStuffCore *hsc, *hsc1, *hsc2;
+    HotStuffCore *hsc;
 
-    ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr), hsc1(nullptr), hsc2(nullptr) {}
+    ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr){}
     ChainCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2,
             HotStuffCore *hsc, HotStuffCore *hsc1, HotStuffCore *hsc2):
-        blk(blk), blk1(blk1), blk2(blk2), hsc(hsc), hsc1(hsc1), hsc2(hsc2) {}
+        blk(blk), blk1(blk1), blk2(blk2), hsc(hsc) {}
 
     void serialize(DataStream &s) const override {
          s << *blk
@@ -199,16 +200,16 @@ struct ChainCommitted: public Serializable {
 
     void unserialize(DataStream &s) override {
         assert(hsc != nullptr);
-        assert(hsc1 != nullptr);
-        assert(hsc2 != nullptr);
+        //assert(hsc1 != nullptr);
+        //assert(hsc2 != nullptr);
         //s >> proposer;
         Block _blk, _blk1, _blk2;
         _blk.unserialize(s, hsc);
-        _blk1.unserialize(s, hsc1);
-        _blk2.unserialize(s, hsc2);
+        _blk1.unserialize(s, hsc);
+        _blk2.unserialize(s, hsc);
         blk = hsc->storage->add_blk(std::move(_blk), hsc->get_config());
-        blk1 = hsc1->storage->add_blk(std::move(_blk1), hsc1->get_config());
-        blk2 = hsc2->storage->add_blk(std::move(_blk2), hsc2->get_config());
+        blk1 = hsc->storage->add_blk(std::move(_blk1), hsc->get_config());
+        blk2 = hsc->storage->add_blk(std::move(_blk2), hsc->get_config());
     }
 
     operator std::string () const {
