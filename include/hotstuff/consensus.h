@@ -189,7 +189,7 @@ struct ChainCommitted: public Serializable {
 
     ChainCommitted(): blk(nullptr), blk1(nullptr), blk2(nullptr), hsc(nullptr){}
     ChainCommitted(const block_t &blk, const block_t &blk1, const block_t &blk2,
-            HotStuffCore *hsc, HotStuffCore *hsc1, HotStuffCore *hsc2):
+            HotStuffCore *hsc):
         blk(blk), blk1(blk1), blk2(blk2), hsc(hsc) {}
 
     void serialize(DataStream &s) const override {
