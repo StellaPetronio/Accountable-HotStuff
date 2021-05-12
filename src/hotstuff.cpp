@@ -246,15 +246,16 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     chain_vec.push_back(blk1);
     chain_vec.push_back(blk2);
 
-    //Save in commit_tree 
+    //Build the T_u
     std::vector<block_t> commit_tree;
     block_t b;
     std::vector<block_t> parents_ = blk->get_parents();
-    for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_[0])
+    for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_.size())
     {
         commit_tree.push_back(b);
     }
 
+    //receivedDecided U T_u 
     std::vector<block_t> total_tree;
     copy(commit_tree.begin(), commit_tree.end(), back_inserter(total_tree));
     for(auto x : chain_vec){
@@ -268,9 +269,9 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 }
 
 void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree) {
-    for(size_t i = 0; i < tree.size(); i++){
-        for(size_t j = 1; j < tree.size(); j++){
-            if(conflicting(tree[i],tree[j])){
+    for(auto i : tree){
+        for(auto j : tree){
+            if(conflicting(i,j)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find a conflict!");
                 return;
