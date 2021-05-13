@@ -236,15 +236,15 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     if (peer.is_null()) return;
     msg.postponed_parse(this);
 
-    // //Save the blks present in the MsgCommitted into a vector
-    // std::vector<block_t> chain_vec;
-    // auto &chain_ = msg.chain;
-    // block_t blk = chain_.blk;
-    // block_t blk1 = chain_.blk1;
-    // block_t blk2 = chain_.blk2;
-    // chain_vec.push_back(blk);
-    // chain_vec.push_back(blk1);
-    // chain_vec.push_back(blk2);
+    //Save the blks present in the MsgCommitted into a vector
+    std::vector<block_t> chain_vec;
+    auto &chain_ = msg.chain;
+    block_t blk = chain_.blk;
+    block_t blk1 = chain_.blk1;
+    block_t blk2 = chain_.blk2;
+    chain_vec.push_back(blk);
+    chain_vec.push_back(blk1);
+    chain_vec.push_back(blk2);
 
     // //Build the T_u
     // std::vector<block_t> commit_tree;
@@ -262,7 +262,8 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //     total_tree.push_back(x);
     // }
 
-    // periodicalCheck_conflicting(total_tree);
+    //periodicalCheck_conflicting(total_tree);
+    periodicalCheck_conflicting(chain_vec);
 
     // periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
 
