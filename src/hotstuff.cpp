@@ -271,7 +271,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 
 void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree) {
     for(auto i : tree){
-        for(auto j : tree){
+        for(auto (j+ 1) : tree){
             if(conflicting(i,j)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find a conflict!");
@@ -286,7 +286,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree)
 
 void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree_blk){
     for(auto i : tree_blk){
-        for(auto j : tree_blk){
+        for(auto (j+1) : tree_blk){
             if(invalid_unlocking(i, j)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find an invalid unlocking!");
