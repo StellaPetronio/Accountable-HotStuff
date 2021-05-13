@@ -232,9 +232,9 @@ bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
     LOG_INFO("Committed message received");
     
-    // const PeerId &peer = conn->get_peer_id();
-    // if (peer.is_null()) return;
-    // msg.postponed_parse(this);
+    const PeerId &peer = conn->get_peer_id();
+    if (peer.is_null()) return;
+    msg.postponed_parse(this);
 
     // //Save the blks present in the MsgCommitted into a vector
     // std::vector<block_t> chain_vec;
