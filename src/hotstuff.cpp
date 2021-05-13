@@ -247,13 +247,13 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     chain_vec.push_back(blk2);
 
     //Build the T_u
-    std::vector<block_t> commit_tree;
-    block_t b;
-    std::vector<block_t> parents_ = blk->get_parents();
-    for (b = blk; b->get_height() >= get_genesis()->get_height(); parents_[0])
-    {
-         commit_tree.push_back(b);
-    }
+    // std::vector<block_t> commit_tree;
+    // block_t b;
+    // std::vector<block_t> parents_ = blk->get_parents();
+    // for (b = blk; b->get_height() >= get_genesis()->get_height(); parents_[0])
+    // {
+    //      commit_tree.push_back(b);
+    // }
 
     // //receivedDecided U T_u 
     // std::vector<block_t> total_tree;
@@ -262,10 +262,10 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //     total_tree.push_back(x);
     // }
 
-    periodicalCheck_conflicting(commit_tree);
-    //periodicalCheck_conflicting(chain_vec);
+    //periodicalCheck_conflicting(commit_tree);
+    periodicalCheck_conflicting(chain_vec);
 
-    // periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
+    periodicalCheck_invalid_unlocking(chain_vec);
 
 }
 
@@ -284,8 +284,8 @@ void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree)
     }
 }
 
-void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree, const std::vector<block_t> &chian_vec){
-    for(auto i : tree){
+void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &chian_vec){
+    for(auto i : chian_vec){
         for(auto j : chian_vec){
             if(invalid_unlocking(i, j)){
                 //calculate the proof of culpability 
