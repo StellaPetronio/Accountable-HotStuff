@@ -232,39 +232,39 @@ bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
     LOG_INFO("Committed message received");
     
-    const PeerId &peer = conn->get_peer_id();
-    if (peer.is_null()) return;
-    msg.postponed_parse(this);
+    // const PeerId &peer = conn->get_peer_id();
+    // if (peer.is_null()) return;
+    // msg.postponed_parse(this);
 
-    //Save the blks present in the MsgCommitted into a vector
-    std::vector<block_t> chain_vec;
-    auto &chain_ = msg.chain;
-    block_t blk = chain_.blk;
-    block_t blk1 = chain_.blk1;
-    block_t blk2 = chain_.blk2;
-    chain_vec.push_back(blk);
-    chain_vec.push_back(blk1);
-    chain_vec.push_back(blk2);
+    // //Save the blks present in the MsgCommitted into a vector
+    // std::vector<block_t> chain_vec;
+    // auto &chain_ = msg.chain;
+    // block_t blk = chain_.blk;
+    // block_t blk1 = chain_.blk1;
+    // block_t blk2 = chain_.blk2;
+    // chain_vec.push_back(blk);
+    // chain_vec.push_back(blk1);
+    // chain_vec.push_back(blk2);
 
-    //Build the T_u
-    std::vector<block_t> commit_tree;
-    block_t b;
-    std::vector<block_t> parents_ = blk->get_parents();
-    for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_.size())
-    {
-        commit_tree.push_back(b);
-    }
+    // //Build the T_u
+    // std::vector<block_t> commit_tree;
+    // block_t b;
+    // std::vector<block_t> parents_ = blk->get_parents();
+    // for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_.size())
+    // {
+    //     commit_tree.push_back(b);
+    // }
 
-    //receivedDecided U T_u 
-    std::vector<block_t> total_tree;
-    copy(commit_tree.begin(), commit_tree.end(), back_inserter(total_tree));
-    for(auto x : chain_vec){
-        total_tree.push_back(x);
-    }
+    // //receivedDecided U T_u 
+    // std::vector<block_t> total_tree;
+    // copy(commit_tree.begin(), commit_tree.end(), back_inserter(total_tree));
+    // for(auto x : chain_vec){
+    //     total_tree.push_back(x);
+    // }
 
-    periodicalCheck_conflicting(total_tree);
+    // periodicalCheck_conflicting(total_tree);
 
-    periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
+    // periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
 
 }
 
