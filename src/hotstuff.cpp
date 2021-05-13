@@ -250,7 +250,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     std::vector<block_t> commit_tree;
     block_t b;
     std::vector<block_t> parents_ = blk->get_parents();
-    for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_.size())
+    for (b = blk; b->get_height() > get_b_exec()->get_height(); parents_[0])
     {
          commit_tree.push_back(b);
     }
