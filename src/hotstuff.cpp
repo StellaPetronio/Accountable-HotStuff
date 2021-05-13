@@ -262,7 +262,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //     total_tree.push_back(x);
     // }
 
-    periodicalCheck_conflicting(total_tree);
+    periodicalCheck_conflicting(commit_tree);
     //periodicalCheck_conflicting(chain_vec);
 
     // periodicalCheck_invalid_unlocking(commit_tree, chain_vec);
