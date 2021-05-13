@@ -219,7 +219,7 @@ class HotStuffBase: public HotStuffCore {
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
     void periodicalCheck_conflicting(const std::vector<block_t> &);
-    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &, const std::vector<block_t> &);
+    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &);
 
     protected:
 
