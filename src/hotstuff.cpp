@@ -265,14 +265,14 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //periodicalCheck_conflicting(commit_tree);
     //periodicalCheck_conflicting(tree_blk);
 
-    periodicalCheck_invalid_unlocking(blk_cache->get_blk_cache(), blks_received);
+    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
 
 }
 
 void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &blks_map) {
-    for(auto i : tree){
-        for(size_t j =  i + 1; j < tree.size(); j++){
-            if(conflicting(i,tree[j])){
+    for(auto &i : blks_map){
+        for(auto &j : blks_map){
+            if(conflicting(i.second,j.second)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find a conflict!");
                 return;
