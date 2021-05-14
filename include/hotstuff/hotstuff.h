@@ -250,6 +250,7 @@ class HotStuffBase: public HotStuffCore {
 
     size_t size() const { return peers.size(); }
     const auto &get_decision_waiting() const { return decision_waiting; }
+    size_t get_blks_received_size() { return blks_received.size(); }
     ThreadCall &get_tcall() { return tcall; }
     PaceMaker *get_pace_maker() { return pmaker.get(); }
     void print_stat() const;
