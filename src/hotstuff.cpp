@@ -275,7 +275,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
         for(auto &j : blks_map){
             if(conflicting(i.second,j.second)){
                 //calculate the proof of culpability 
-                LOG_WARN("Find a conflict: %lu", std::string(i.second).c_str(), std::string(j.second).c_str());
+                LOG_WARN("Find a conflict: %lu", std::string(*i.second).c_str(), std::string(*j.second).c_str());
                 return;
             }
             else{
