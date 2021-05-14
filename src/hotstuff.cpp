@@ -263,9 +263,10 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 
     //periodicalCheck_conflicting(commit_tree);
     //periodicalCheck_conflicting(tree_blk);
-
-    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
+    LOG_INFO("blks_received: %lu", blks_received->get_blks_received_size());
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
+    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
+    
 
 }
 
@@ -274,7 +275,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
         for(auto &j : blks_map){
             if(conflicting(i.second,j.second)){
                 //calculate the proof of culpability 
-                LOG_WARN("Find a conflict!");
+                LOG_WARN("Find a conflict: %lu", std::string(i.second).c_str(), std::string(j.second).c_str());
                 return;
             }
             else{
@@ -289,7 +290,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
         for(auto &j : blks_rec){
             if(invalid_unlocking(i.second, j.second)){
                 //calculate the proof of culpability 
-                LOG_WARN("Find an invalid unlocking!");
+                LOG_WARN("Find an invalid unlocking: %lu", std::string(i.second).c_str(), std::string(j.second).c_str());
                 return;
             }
             else{
