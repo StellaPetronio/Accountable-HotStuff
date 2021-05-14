@@ -267,6 +267,10 @@ class EntityStorage {
         return it == cmd_cache.end() ? nullptr: it->second;
     }
 
+    std::unordered_map<const uint256_t, block_t> get_blk_cache(){
+        return blk_cache; 
+    }
+    
     size_t get_cmd_cache_size() {
         return cmd_cache.size();
     }

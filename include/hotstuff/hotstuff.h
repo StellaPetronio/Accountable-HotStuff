@@ -173,6 +173,8 @@ class HotStuffBase: public HotStuffCore {
     cmd_queue_t cmd_pending;
     std::queue<uint256_t> cmd_pending_buffer;
 
+    std::unordered_map<const uint256_t, block_t> blks_received;
+
     /* statistics */
     uint64_t fetched;
     uint64_t delivered;
@@ -218,8 +220,8 @@ class HotStuffBase: public HotStuffCore {
     bool conflicting(const block_t &blk, const block_t &blk_);
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
-    void periodicalCheck_conflicting(const std::vector<block_t> &);
-    void periodicalCheck_invalid_unlocking(const std::vector<block_t> &);
+    void periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &);
+    void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
 
     protected:
 
