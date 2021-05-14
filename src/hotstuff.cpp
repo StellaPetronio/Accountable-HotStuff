@@ -290,7 +290,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
         for(auto &j : blks_rec){
             if(invalid_unlocking(i.second, j.second)){
                 //calculate the proof of culpability 
-                LOG_WARN("Find an invalid unlocking: %lu", std::string(i.second).c_str(), std::string(j.second).c_str());
+                LOG_WARN("Find an invalid unlocking: %lu", std::string(*i.second).c_str(), std::string(*j.second).c_str());
                 return;
             }
             else{
