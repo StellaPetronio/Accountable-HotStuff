@@ -237,14 +237,14 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     msg.postponed_parse(this);
 
     //Save the blks present in the MsgCommitted into a vector
-    std::vector<block_t> tree_blk;
     auto &chain_ = msg.chain;
     block_t blk = chain_.blk;
     block_t blk1 = chain_.blk1;
     block_t blk2 = chain_.blk2;
-    tree_blk.push_back(blk);
-    tree_blk.push_back(blk1);
-    tree_blk.push_back(blk2);
+    blks_received.insert((blk->get_hash(), blk));
+    blks_received.insert((blk1->get_hash(), blk1));
+    blks_received.insert((blk2->get_hash(), blk2));
+
 
     //Build the T_u
     // std::vector<block_t> commit_tree;
@@ -263,13 +263,13 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     // }
 
     //periodicalCheck_conflicting(commit_tree);
-    periodicalCheck_conflicting(tree_blk);
+    //periodicalCheck_conflicting(tree_blk);
 
-    periodicalCheck_invalid_unlocking(tree_blk);
+    periodicalCheck_invalid_unlocking(blk_cache->get_blk_cache(), blks_received);
 
 }
 
-void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree) {
+void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &blks_map) {
     for(auto i : tree){
         for(size_t j =  i + 1; j < tree.size(); j++){
             if(conflicting(i,tree[j])){
@@ -284,10 +284,10 @@ void HotStuffBase::periodicalCheck_conflicting(const std::vector<block_t> &tree)
     }
 }
 
-void HotStuffBase::periodicalCheck_invalid_unlocking(const std::vector<block_t> &tree_blk){
-    for(auto i : tree_blk){
-        for(size_t j =  i + 1; j < tree_blk.size(); j++){
-            if(invalid_unlocking(i, tree_blk[j])){
+void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const std::unordered_map<const uint256_t, block_t> &blks_rec){
+    for(auto &i : blk_cache){
+        for(auto &j : blks_rec){
+            if(invalid_unlocking(i.second, j.second)){
                 //calculate the proof of culpability 
                 LOG_WARN("Find an invalid unlocking!");
                 return;
