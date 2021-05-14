@@ -241,10 +241,9 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     block_t blk = chain_.blk;
     block_t blk1 = chain_.blk1;
     block_t blk2 = chain_.blk2;
-    blks_received.insert((blk->get_hash(), blk));
-    blks_received.insert((blk1->get_hash(), blk1));
-    blks_received.insert((blk2->get_hash(), blk2));
-
+    blks_received.insert(std::make_pair(blk->get_hash(), blk));
+    blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
+    blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
 
     //Build the T_u
     // std::vector<block_t> commit_tree;
