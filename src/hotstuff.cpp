@@ -236,7 +236,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     if (peer.is_null()) return;
     msg.postponed_parse(this);
 
-    //Save the blks present in the MsgCommitted into a vector
+    //Save the blks received through the MsgCommitted into a global variable 
     auto &chain_ = msg.chain;
     block_t blk = chain_.blk;
     block_t blk1 = chain_.blk1;
@@ -265,6 +265,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //periodicalCheck_conflicting(tree_blk);
 
     periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
+    LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
 
 }
 
