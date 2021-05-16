@@ -239,9 +239,12 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //Save the blks received through the MsgCommitted into a global variable 
     auto &chain_ = msg.chain;
     block_t blk = chain_.blk;
+    if (!blk) return;
     block_t blk1 = chain_.blk1;
+    if (!blk1) return;
     block_t blk2 = chain_.blk2;
-    
+    if (!blk2) return;
+
     blks_received.insert(std::make_pair(blk->get_hash(), blk));
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
@@ -262,21 +265,21 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     //     total_tree.push_back(x);
     // }
 
-    //periodicalCheck_conflicting(commit_tree);
-    //periodicalCheck_conflicting(tree_blk);
     LOG_INFO("blks_received: %lu", get_blks_received_size());
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
+    periodicalCheck_conflicting(blks_received);
     periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
     
-
 }
 
 void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &blks_map) {
     for(auto &i : blks_map){
         for(auto &j : blks_map){
             if(conflicting(i.second,j.second)){
-                //calculate the proof of culpability 
-                LOG_WARN("Find a conflict: %lu", std::string(*i.second).c_str(), std::string(*j.second).c_str());
+                //calculate the proof of culpability
+                block_t blk_i = i.second;
+                block_t blk_j = j.second;
+                LOG_WARN("Find a conflict: %lu", std::string(*blk_i).c_str(), std::string(*blk_j).c_str());
                 return;
             }
             else{
@@ -291,7 +294,9 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
         for(auto &j : blks_rec){
             if(invalid_unlocking(i.second, j.second)){
                 //calculate the proof of culpability 
-                LOG_WARN("Find an invalid unlocking: %lu", std::string(*i.second).c_str(), std::string(*j.second).c_str());
+                block_t blk_i = i.second;
+                block_t blk_j = j.second;
+                LOG_WARN("Find an invalid unlocking: %s", std::string(*blk_i).c_str(), std::string(*blk_j).c_str());
                 return;
             }
             else{
