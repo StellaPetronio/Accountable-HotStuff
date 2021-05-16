@@ -277,6 +277,12 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     
 }
 
+void HotStuffBase::print_map(std::unordered_map<const uint256_t, block_t> const &blks_map)
+{
+    for (auto const &pair: blks_map) {
+        std::cout << "{" << get_hex10(pair.first) << ": " << std::string(*pair.second).c_str() << "}\n";
+    }
+}
 
 void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &blks_map) {
     for(auto &i : blks_map){
@@ -285,9 +291,10 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                 //calculate the proof of culpability
                 block_t blk_i = i.second;
                 block_t blk_j = j.second;
-                LOG_WARN("Find a conflict between: ");
-                LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
-                LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                LOG_WARN("Find a conflict: ");
+                print_map(blks_map);
+                //LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
+                //LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
                 return;
             }
             else{
@@ -305,8 +312,9 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                 block_t blk_i = i.second;
                 block_t blk_j = j.second;
                 LOG_WARN("Find an invalid unlocking: ");
-                LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
-                LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                //LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
+                //LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                print_map(blk_cache);
                 return;
             }
             else{
