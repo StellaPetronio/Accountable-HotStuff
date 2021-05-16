@@ -249,6 +249,11 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
 
+    std::unordered_map<const uint256_t, block_t> blks_received_local;
+    blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
+    blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
+    blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
+
     //Build the T_u
     // std::vector<block_t> commit_tree;
     // block_t b;
@@ -264,7 +269,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     // for(auto x : chain_vec){
     //     total_tree.push_back(x);
     // }
-
+    LOG_INFO("blks_received_local: %lu", blks_received_local.size());
     LOG_INFO("blks_received: %lu", get_blks_received_size());
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     periodicalCheck_conflicting(blks_received);
