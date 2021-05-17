@@ -230,7 +230,7 @@ bool HotStuffBase::invalid_unlocking(const block_t &blk, const block_t &blk_){
 }
 
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
-    LOG_INFO("Committed message received");
+    LOG_INFO("Committed message received!");
     
     const PeerId &peer = conn->get_peer_id();
     if (peer.is_null()) return;
@@ -249,12 +249,12 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
 
-    std::unordered_map<const uint256_t, block_t> blks_received_local;
-    blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
-    blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
-    blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
+    // std::unordered_map<const uint256_t, block_t> blks_received_local;
+    // blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
+    // blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
+    // blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
 
-    LOG_INFO("blks_received_local: %lu", blks_received_local.size());
+    //LOG_INFO("blks_received_local: %lu", blks_received_local.size());
     LOG_INFO("blks_received: %lu", get_blks_received_size());
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     //periodicalCheck_conflicting(storage->get_blk_cache());
@@ -278,8 +278,8 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                 LOG_WARN("Find a conflict: ");
                 print_map(blks_map);
                 //TODO: print the id of the replicas that voted for this blks and broadcast 
-                LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
-                LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                // LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
+                // LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
                 return;
             }
             else{
@@ -297,11 +297,11 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                 block_t blk_i = i.second;
                 block_t blk_j = j.second;
                 LOG_WARN("Find an invalid unlocking: ");
-                LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
-                LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
-                LOG_WARN("blk_i voted from: %s", blk_i->get_voted());
-                LOG_WARN("blk_j voted from: %s", blk_j->get_voted());
-                print_map(blk_cache);
+                // LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
+                // LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                // LOG_WARN("blk_i voted from: %s", blk_i->get_voted());
+                // LOG_WARN("blk_j voted from: %s", blk_j->get_voted());
+                // print_map(blk_cache);
                 return;
             }
             else{
