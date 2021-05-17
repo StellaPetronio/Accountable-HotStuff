@@ -216,6 +216,7 @@ class HotStuffBase: public HotStuffCore {
 
      /* For accountability */
     void do_broadcast_committed(const ChainCommitted &) override;
+    void print_map(std::unordered_map<const uint256_t, block_t> const &blks_map);
 
     bool conflicting(const block_t &blk, const block_t &blk_);
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);

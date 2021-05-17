@@ -178,6 +178,10 @@ class Block {
         return cmds;
     }
 
+    const std::unordered_set<ReplicaID> &get_voted() const{
+        return voted;
+    }
+
     const std::vector<block_t> &get_parents() const {
         return parents;
     }
@@ -203,6 +207,12 @@ class Block {
     const block_t &get_qc_ref() const { return qc_ref; }
 
     const bytearray_t &get_extra() const { return extra; }
+
+    // operator std::string () const{
+    //     DataStream s;
+    //     s << "< voted " << for(auto &i : voted){ << " " << i << " "}
+    // }
+
 
     operator std::string () const {
         DataStream s;
