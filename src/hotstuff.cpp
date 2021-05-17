@@ -258,7 +258,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     LOG_INFO("blks_received: %lu", get_blks_received_size());
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     //periodicalCheck_conflicting(storage->get_blk_cache());
-    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received_local);
+    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
     
 }
 
