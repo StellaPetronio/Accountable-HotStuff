@@ -254,21 +254,6 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
 
-    //Build the T_u
-    // std::vector<block_t> commit_tree;
-    // block_t b;
-    // std::vector<block_t> parents_ = blk->get_parents();
-    // for (b = blk; b->get_height() >= get_genesis()->get_height(); parents_[0])
-    // {
-    //      commit_tree.push_back(b);
-    // }
-
-    // //receivedDecided U T_u 
-    // std::vector<block_t> total_tree;
-    // copy(commit_tree.begin(), commit_tree.end(), back_inserter(total_tree));
-    // for(auto x : chain_vec){
-    //     total_tree.push_back(x);
-    // }
     LOG_INFO("blks_received_local: %lu", blks_received_local.size());
     LOG_INFO("blks_received: %lu", get_blks_received_size());
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
@@ -277,10 +262,9 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     
 }
 
-void HotStuffBase::print_map(std::unordered_map<const uint256_t, block_t> const &blks_map)
-{
+void HotStuffBase::print_map(std::unordered_map<const uint256_t, block_t> const &blks_map){
     for (auto const &pair: blks_map) {
-        std::cout << "{" << get_hex10(pair.first) << ": " << std::string(*pair.second).c_str() << "}\n";
+        LOG_INFO("{", get_hex10(pair.first), ": ", std::string(*pair.second).c_str());
     }
 }
 
@@ -293,8 +277,9 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                 block_t blk_j = j.second;
                 LOG_WARN("Find a conflict: ");
                 print_map(blks_map);
-                //LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
-                //LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                //TODO: print the id of the replicas that voted for this blks and broadcast 
+                LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
+                LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
                 return;
             }
             else{
@@ -312,8 +297,10 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                 block_t blk_i = i.second;
                 block_t blk_j = j.second;
                 LOG_WARN("Find an invalid unlocking: ");
-                //LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
-                //LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                LOG_WARN("This blk: %s", std::string(*blk_i).c_str());
+                LOG_WARN("And this blk: %s", std::string(*blk_j).c_str());
+                LOG_WARN("blk_i voted from: %s", blk_i->get_voted());
+                LOG_WARN("blk_j voted from: %s", blk_j->get_voted());
                 print_map(blk_cache);
                 return;
             }
@@ -472,7 +459,6 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
         vpool(ec, nworker),
         pn(ec, netconfig),
         pmaker(std::move(pmaker)),
-
         fetched(0), delivered(0),
         nsent(0), nrecv(0),
         part_parent_size(0),
