@@ -208,12 +208,6 @@ class Block {
 
     const bytearray_t &get_extra() const { return extra; }
 
-    // operator std::string () const{
-    //     DataStream s;
-    //     s << "< voted " << for(auto &i : voted){ << " " << i << " "}
-    // }
-
-
     operator std::string () const {
         DataStream s;
         s << "<block "
