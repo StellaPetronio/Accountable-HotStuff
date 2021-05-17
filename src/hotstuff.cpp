@@ -277,7 +277,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
                         if (std::to_string(*it_i) == std::to_string(*it_j))
                         {
-                            LOG_WARN("Faulty replica: %s", std::to_string(*it_i))
+                            LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
                         }
                         
                     }
@@ -305,7 +305,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
                         if (std::to_string(*it_i) == std::to_string(*it_j))
                         {
-                            LOG_WARN("Faulty replica: %s", std::to_string(*it_i))
+                            LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
                         }
                         
                     }
