@@ -217,6 +217,15 @@ bool HotStuffBase::conflicting(const block_t &blkA, const block_t &blkB){
     }
 }
 
+bool HotStuffBase::check_lastBlockChain(const block_t &blk1, const block_t &blk2){
+    if(blk1->get_height() == blk2->get_height() && blk1->get_qc_ref() == blk2->get_qc_ref() && blk1->get_qc() == blk2->get_qc()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
     bool invalid = false;
     std::vector<block_t> parentsA = blkA->get_parents();
@@ -306,7 +315,6 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                         {
                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
                         }
-                        
                     }
                 }
                 return;
