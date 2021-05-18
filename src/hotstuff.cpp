@@ -220,7 +220,7 @@ bool HotStuffBase::conflicting(const block_t &blkA, const block_t &blkB){
 bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
     bool invalid = false;
     std::vector<block_t> parentsA = blkA->get_parents();
-    if((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){
+    if((check_lastBlockChain(blkB, get_blk2()) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){
         invalid = true;
         return invalid;
     }
@@ -231,7 +231,7 @@ bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
 
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
     LOG_INFO("Committed message received!");
-    
+
     const PeerId &peer = conn->get_peer_id();
     if (peer.is_null()) return;
     msg.postponed_parse(this);
@@ -275,7 +275,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
-                        if (std::to_string(*it_i) == std::to_string(*it_j))
+                        if (*it_i == *it_j)
                         {
                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
                         }
@@ -303,7 +303,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
-                        if (std::to_string(*it_i) == std::to_string(*it_j))
+                        if (*it_i == *it_j)
                         {
                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
                         }
