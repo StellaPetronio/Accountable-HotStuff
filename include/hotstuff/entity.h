@@ -208,6 +208,15 @@ class Block {
 
     const bytearray_t &get_extra() const { return extra; }
 
+    bool check_lastBlockChain(const block_t blk1, const block_t blk2){
+        if(blk1.height == blk2.height && blk1.qc_ref == blk2.qc_ref && blk1->get_hex10(hash) == blk2->get_hex10(hash)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     operator std::string () const {
         DataStream s;
         s << "<block "

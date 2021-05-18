@@ -208,6 +208,10 @@ struct ChainCommitted: public Serializable {
         blk2 = hsc->storage->add_blk(std::move(_blk2), hsc->get_config());
     }
 
+    block_t get_blk2() {
+        return blk2;
+    }
+
     operator std::string () const {
         DataStream s;
         s << "<Chain "
