@@ -273,7 +273,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     periodicalCheck_conflicting(storage->get_blk_cache(), blks_received);
 
     const uint256_t hash_blk2 = blk2->get_hash();
-    
+
     std::unordered_map<const uint256_t, block_t>::const_iterator got = blks_received_local.find(hash_blk2);
     if(hash_blk2 == blks_received_local.end()){
         LOG_INFO("Not found");
@@ -291,7 +291,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                 LOG_WARN("Find a conflict!");
                 //calculate the proof of culpability
                 block_t blk_i = i.second;
-                //block_t blk_j = j.second;
+                block_t blk_j = j.second;
                 std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
