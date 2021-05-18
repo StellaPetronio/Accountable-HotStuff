@@ -174,6 +174,7 @@ class HotStuffBase: public HotStuffCore {
     std::queue<uint256_t> cmd_pending_buffer;
 
     std::unordered_map<const uint256_t, block_t> blks_received;
+    std::unordered_map<const uint256_t, block_t> blks2_received;
 
     /* statistics */
     uint64_t fetched;
@@ -223,7 +224,7 @@ class HotStuffBase: public HotStuffCore {
     void periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
     void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
     bool check_lastBlockChain(const block_t &blk1, const block_t &blk2);
-    
+
     protected:
 
     /** Called to replicate the execution of a command, the application should
@@ -252,6 +253,7 @@ class HotStuffBase: public HotStuffCore {
     size_t size() const { return peers.size(); }
     const auto &get_decision_waiting() const { return decision_waiting; }
     size_t get_blks_received_size() { return blks_received.size(); }
+    size_t get_blks2_received_size() { return blks2_received.size(); }
     ThreadCall &get_tcall() { return tcall; }
     PaceMaker *get_pace_maker() { return pmaker.get(); }
     void print_stat() const;
