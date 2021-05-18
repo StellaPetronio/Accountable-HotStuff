@@ -209,7 +209,7 @@ class Block {
     const bytearray_t &get_extra() const { return extra; }
 
     bool check_lastBlockChain(const block_t blk1, const block_t blk2){
-        if(blk1.height == blk2.height && blk1.qc_ref == blk2.qc_ref && blk1->get_hex10(hash) == blk2->get_hex10(hash)){
+        if(blk1->get_height() == blk2->get_height() && blk1->get_qc_ref() == blk2->get_qc_ref() && blk1->get_qc() == blk2->get_qc()){
             return true;
         }
         else{
