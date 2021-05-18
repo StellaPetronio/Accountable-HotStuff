@@ -229,7 +229,8 @@ bool HotStuffBase::check_lastBlockChain(const block_t &blk1, const block_t &blk2
 bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
     bool invalid = false;
     std::vector<block_t> parentsA = blkA->get_parents();
-    if((check_lastBlockChain(blkB, get_blk2())) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){
+    //if((check_lastBlockChain(blkB, get_blk2())) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){
+    if(((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){   
         invalid = true;
         return invalid;
     }
@@ -258,17 +259,19 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
 
+    blks2_received.insert(std::make_pair(blk2->get_hash(), blk2));
     // std::unordered_map<const uint256_t, block_t> blks_received_local;
     // blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
     // blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
     // blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
 
     //LOG_INFO("blks_received_local: %lu", blks_received_local.size());
-    LOG_INFO("blks_received: %lu", get_blks_received_size());
+    LOG_INFO("blks2_received: %lu", get_blks2_received_size());
+    LOG_INFO("blks_received: %lu", get_blks_received_size()); 
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     periodicalCheck_conflicting(storage->get_blk_cache(), blks_received);
-    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
-    
+    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks2_received);
+   
 }
 
 
