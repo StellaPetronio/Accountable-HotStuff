@@ -222,7 +222,8 @@ class HotStuffBase: public HotStuffCore {
 
     void periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
     void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
-
+    bool check_lastBlockChain(const block_t &blk1, const block_t &blk2);
+    
     protected:
 
     /** Called to replicate the execution of a command, the application should
