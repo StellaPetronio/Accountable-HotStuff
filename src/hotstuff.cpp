@@ -230,7 +230,7 @@ bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
     bool invalid = false;
     std::vector<block_t> parentsA = blkA->get_parents();
     //if((check_lastBlockChain(blkB, get_blk2())) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){
-    if(((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){   
+    if((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){   
         invalid = true;
         return invalid;
     }
