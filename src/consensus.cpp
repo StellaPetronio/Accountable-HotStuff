@@ -84,6 +84,42 @@ bool HotStuffCore::on_deliver_blk(const block_t &blk) {
     return true;
 }
 
+void HotStuffBase::periodicalCheck_conflicting() {
+    auto blk_cache = storage->get_blk_cache();
+    auto blks_received = get_blks_received();
+    for(auto &i : blk_cache){
+        for(auto &j : blks_received){
+            if(conflicting(i.second,j.second)){
+                LOG_WARN("Found a conflict!");
+                Proof proof(i.second,j.second,this);
+                on_receive_proof(proof);
+                /* broadcast to all replicas */
+                do_broadcast_proof(proof);
+            }
+            else{
+                LOG_INFO("Everything is fine!");
+            }
+        }
+    }
+}
+
+void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
+    auto blk_cache = storage->get_blk_cache();
+    for(auto &i : blk_cache){
+        if(invalid_unlocking(i.second, blk2)){
+            LOG_WARN("Found an invalid unlocking!");
+            //calculate the proof of culpability 
+            Proof proof(i.second,blk2,this);
+            on_receive_proof(proof);
+            /* broadcast to all replicas */
+            do_broadcast_proof(proof);
+        }
+        else{
+            LOG_INFO("Everything is fine!");
+        }
+    }
+}
+
 void HotStuffCore::update_hqc(const block_t &_hqc, const quorum_cert_bt &qc) {
     if (_hqc->height > hqc.first->height)
     {
