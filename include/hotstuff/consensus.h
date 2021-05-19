@@ -69,6 +69,9 @@ class HotStuffCore {
     void on_receive_proposal_(const Proposal &prop);
     void on_receive_chain_(const ChainCommitted &chian);
     void on_receive_proof_(const Proof &proof);
+    
+    void periodicalCheck_conflicting();
+    void periodicalCheck_invalid_unlocking(const block_t &);
 
     protected:
     ReplicaID id;                  /**< identity of the replica itself */
