@@ -276,11 +276,11 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
 
     //std::unordered_map<const uint256_t, block_t>::const_iterator got = blks_received_local.find(hash_blk2);
     auto search = blks_received_local(hash_blk2);
-    if(search == blks_received_local.end()){
-        LOG_INFO("Not found");
+    if(search != blks_received_local.end()){
+        periodicalCheck_invalid_unlocking(storage->get_blk_cache(), search->second);
     }
     else{
-        periodicalCheck_invalid_unlocking(storage->get_blk_cache(), search->second);
+        LOG_INFO("Not found");
     }
 }
 
@@ -296,7 +296,7 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
                 std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
-                    for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_2++){
+                    for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
                         if (*it_i == *it_j)
                         {
                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
