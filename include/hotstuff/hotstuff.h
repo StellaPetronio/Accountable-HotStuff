@@ -227,9 +227,12 @@ class HotStuffBase: public HotStuffCore {
      /* For accountability */
     void do_broadcast_committed(const ChainCommitted &) override;
     void do_broadcast_proof(const Proof &) override;
+
+    void periodicalCheck_conflicting() override;
+    void periodicalCheck_invalid_unlocking(const block_t &blk2) override;
     
-    bool conflicting(const block_t &blk, const block_t &blk_) override;
-    bool invalid_unlocking(const block_t &blk, const block_t &blk_) override;
+    bool conflicting(const block_t &blk, const block_t &blk_);
+    bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
     protected:
 
