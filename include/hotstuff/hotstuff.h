@@ -153,10 +153,6 @@ class HotStuffBase: public HotStuffCore {
     using Net = PeerNetwork<opcode_t>;
     using commit_cb_t = std::function<void(const Finality &)>;
 
-
-    void periodicalCheck_conflicting();
-    void periodicalCheck_invalid_unlocking(const block_t &);
-
     protected:
     /** the binding address in replica network */
     NetAddr listen_addr;
