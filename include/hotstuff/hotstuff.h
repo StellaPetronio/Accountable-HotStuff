@@ -201,6 +201,9 @@ class HotStuffBase: public HotStuffCore {
     mutable double part_delivery_time_max;
     mutable std::unordered_map<const PeerId, uint32_t> part_fetched_replica;
 
+    void periodicalCheck_conflicting();
+    void periodicalCheck_invalid_unlocking(const block_t &);
+    
     void on_fetch_cmd(const command_t &cmd);
     void on_fetch_blk(const block_t &blk);
     bool on_deliver_blk(const block_t &blk);
@@ -231,9 +234,6 @@ class HotStuffBase: public HotStuffCore {
     
     bool conflicting(const block_t &blk, const block_t &blk_);
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
-
-    void periodicalCheck_conflicting();
-    void periodicalCheck_invalid_unlocking(const block_t &);
 
     protected:
 
