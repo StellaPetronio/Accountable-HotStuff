@@ -232,8 +232,8 @@ class HotStuffBase: public HotStuffCore {
     bool conflicting(const block_t &blk, const block_t &blk_);
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
-    //void periodicalCheck_conflicting();
-    //void periodicalCheck_invalid_unlocking(const block_t &);
+    void periodicalCheck_conflicting();
+    void periodicalCheck_invalid_unlocking(const block_t &);
 
     protected:
 
