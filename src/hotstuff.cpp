@@ -259,24 +259,23 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
     
-    std::unordered_map<const uint256_t, block_t> blks_received_local;
-    blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
-    blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
-    blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
+    // std::unordered_map<const uint256_t, block_t> blks_received_local;
+    // blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
+    // blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
+    // blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
 
     LOG_INFO("blks_received: %lu", get_blks_received_size()); 
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     periodicalCheck_conflicting(storage->get_blk_cache(), blks_received);
-    periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
+    //periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
     
-    //const uint256_t hash_blk2 = blk2->get_hash();
-    // auto search = blks_received_local.find(hash_blk2);
-    // if(search != blks_received_local.end()){
-    //     periodicalCheck_invalid_unlocking(storage->get_blk_cache(), search->second);
-    // }
-    // else{
-    //     LOG_INFO("Not found");
-    // }
+    auto search = blks_received.find(blk2->get_hash());
+    if(search != blks_received.end()){
+        periodicalCheck_invalid_unlocking(storage->get_blk_cache(), search->second);
+    }
+    else{
+         LOG_INFO("Not found");
+    }
 }
 
 
@@ -307,17 +306,43 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
     }
 }
 
-// void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const block_t &blk2){
+void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const block_t &blk2){
+    for(auto &i : blk_cache){
+        if(invalid_unlocking(i.second, blk2)){
+            LOG_WARN("Find an invalid unlocking!");
+            //calculate the proof of culpability 
+            block_t blk_i = i.second;
+            std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
+            std::unordered_set<ReplicaID> voted_2 = blk2->get_voted();
+            for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
+                for(auto it_2 = voted_2.begin(); it_2 != voted_2.end(); it_2++){
+                    if (*it_i == *it_2)
+                    {
+                        LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
+                    }
+                }
+            }
+            return;
+        }
+        else{
+            LOG_INFO("Everything is fine!");
+        }
+    }
+}
+
+// void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const std::unordered_map<const uint256_t, block_t> &blks_rec){
 //     for(auto &i : blk_cache){
-//             if(invalid_unlocking(i.second, blk2)){
+//         for(auto &j : blks_rec){
+//             if(invalid_unlocking(i.second, j.second)){
 //                 LOG_WARN("Find an invalid unlocking!");
 //                 //calculate the proof of culpability 
 //                 block_t blk_i = i.second;
+//                 block_t blk_j = j.second;
 //                 std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
-//                 std::unordered_set<ReplicaID> voted_2 = blk2->get_voted();
+//                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
 //                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
-//                     for(auto it_2 = voted_2.begin(); it_2 != voted_2.end(); it_2++){
-//                         if (*it_i == *it_2)
+//                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
+//                         if (*it_i == *it_j)
 //                         {
 //                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
 //                         }
@@ -331,33 +356,6 @@ void HotStuffBase::periodicalCheck_conflicting(const std::unordered_map<const ui
 //         }
 //     }
 // }
-
-void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const std::unordered_map<const uint256_t, block_t> &blks_rec){
-    for(auto &i : blk_cache){
-        for(auto &j : blks_rec){
-            if(invalid_unlocking(i.second, j.second)){
-                LOG_WARN("Find an invalid unlocking!");
-                //calculate the proof of culpability 
-                block_t blk_i = i.second;
-                block_t blk_j = j.second;
-                std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
-                std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
-                for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
-                    for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
-                        if (*it_i == *it_j)
-                        {
-                            LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
-                        }
-                    }
-                }
-                return;
-            }
-            else{
-                LOG_INFO("Everything is fine!");
-            }
-        }
-    }
-}
 
 
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
