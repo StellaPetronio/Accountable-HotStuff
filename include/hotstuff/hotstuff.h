@@ -39,6 +39,15 @@ using salticidae::_2;
 const double ent_waiting_timeout = 10;
 const double double_inf = 1e10;
 
+struct MsgProof {
+    static const opcode_t opcode = 0x2;
+    DataStream serialized;
+    Proof proof;
+    MsgProof(const Proof &proof);
+    MsgProof(DataStream &&s): serialized(std::move(s)) {}
+    void postponed_parse(HotStuffCore *hsc);
+};
+
 /** Network message format for Accoutable HotStuff. */
 struct MsgCommitted {
     static const opcode_t opcode = 0x4;
@@ -198,6 +207,7 @@ class HotStuffBase: public HotStuffCore {
 
     /** for accountability: deliver consensus message: <committed> */
     inline void committed_handler(MsgCommitted &&, const Net::conn_t &);
+    inline void proof_handler(MsgCommitted &&, const Net::conn_t &);
 
     /** deliver consensus message: <propose> */
     inline void propose_handler(MsgPropose &&, const Net::conn_t &);
@@ -217,6 +227,7 @@ class HotStuffBase: public HotStuffCore {
 
      /* For accountability */
     void do_broadcast_committed(const ChainCommitted &) override;
+    void do_broadcast_proof(const Proof &) override;
     
     bool conflicting(const block_t &blk, const block_t &blk_);
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);

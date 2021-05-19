@@ -33,6 +33,7 @@ struct Proposal;
 struct Vote;
 struct Finality;
 struct ChainCommitted;
+struct Proof;
 
 /** Abstraction for HotStuff protocol state machine (without network implementation). */
 class HotStuffCore {
@@ -51,6 +52,7 @@ class HotStuffCore {
     std::unordered_map<block_t, promise_t> qc_waiting;
     promise_t propose_waiting;
     promise_t receive_chain_waiting;
+    promise_t receive_proof_waiting;
     promise_t receive_proposal_waiting;
     promise_t hqc_update_waiting;
     /* == feature switches == */
@@ -66,6 +68,7 @@ class HotStuffCore {
     void on_propose_(const Proposal &prop);
     void on_receive_proposal_(const Proposal &prop);
     void on_receive_chain_(const ChainCommitted &chian);
+    void on_receive_proof_(const Proof &proof);
 
     protected:
     ReplicaID id;                  /**< identity of the replica itself */
@@ -95,6 +98,7 @@ class HotStuffCore {
     bool on_deliver_blk(const block_t &blk);
 
     void on_receive_chain(const ChainCommitted &chain);
+    void on_receive_proof(const Proof &proof);
 
     /** Call upon the delivery of a proposal message.
      * The block mentioned in the message should be already delivered. */
@@ -166,6 +170,7 @@ class HotStuffCore {
     promise_t async_hqc_update();
 
     promise_t async_wait_receive_chain();
+    promise_t async_wait_receive_proof();
 
     /* Other useful functions */
     const block_t &get_genesis() const { return b0; }
@@ -177,6 +182,37 @@ class HotStuffCore {
     operator std::string () const;
     void set_vote_disabled(bool f) { vote_disabled = f; }
 };
+
+struct Proof: public Serializable{
+    block_t blk1_conflict, blk2_conflict;
+    HotStuffCore *hsc;
+
+    Proof(): blk1_conflict(nullptr), blk2_conflict(nullptr), hsc(nullptr){}
+    Proof(const block_t &blk1_conflict, const block_t &blk2_conflict, HotStuffCore *hsc): 
+        blk1_conflict(blk1_conflict), blk2_conflict(blk2_conflict), hsc(hsc) {}
+    
+    void serialize(DataStream &s) const override {
+         s << *blk1_conflict
+           << *blk2_conflict;
+    }
+
+    void unserialize(DataStream &s) override {
+        assert(hsc != nullptr);
+        Block _blk1_conflict, _blk2_conflict;
+        _blk1_conflict.unserialize(s, hsc);
+        _blk2_conflict.unserialize(s, hsc);
+        blk1_conflict = hsc->storage->add_blk(std::move(_blk1_conflict), hsc->get_config());
+        blk2_conflict = hsc->storage->add_blk(std::move(_blk2_conflict), hsc->get_config());
+    }
+
+    operator std::string () const {
+        DataStream s;
+        s << "<Blocks conflicting "
+          << "blk1_conflict=" << get_hex10(blk1_conflict->get_hash()) << " "
+          << "blk2_conflict=" << get_hex10(blk2_conflict->get_hash()) << ">";
+        return s;
+    }
+}
 
 /** Abstraction for chain committed. */
 struct ChainCommitted: public Serializable {
