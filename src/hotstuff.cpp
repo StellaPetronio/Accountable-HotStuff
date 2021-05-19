@@ -256,6 +256,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     periodicalCheck_conflicting();
     
     for(auto &blk_ : blks_received){
+        //rebuild the chain
         auto blk2 = blk_.second;
         auto parents_blk2 = blk_.second->get_parents();
         auto search_blk1 = blks_received.find(parents_blk2[0]->get_hash());
@@ -263,14 +264,12 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
             return;
         }
         else{
-            //auto blk1 = search_blk1.second;
             auto blk1 = parents_blk2[0];
             auto parents_blk1 = blk1->get_parents();
             auto search_blk = blks_received.find(parents_blk1[0]->get_hash());
             if(search_blk == blks_received.end()){
                 return;
             }else{
-                //auto blk = search_blk.second;
                 auto blk = parents_blk1[0];
             }
         }
@@ -326,8 +325,7 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
             }
         }
     }
-
-    
+     
 }
 
 void HotStuffBase::periodicalCheck_conflicting() {
