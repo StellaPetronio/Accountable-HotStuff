@@ -20,6 +20,7 @@
 
 #include "hotstuff/util.h"
 #include "hotstuff/consensus.h"
+#include "hotstuff/hotstuff.h"
 
 #define LOG_INFO HOTSTUFF_LOG_INFO
 #define LOG_DEBUG HOTSTUFF_LOG_DEBUG
