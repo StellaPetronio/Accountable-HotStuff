@@ -31,7 +31,7 @@ const opcode_t MsgProof::opcode;
 MsgProof::MsgProof(const Proof &proof) { serialized << proof; }
 void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
     proof.hsc = hsc;
-    serialized >> chain;
+    serialized >> proof;
 }
 
 const opcode_t MsgCommitted::opcode;
