@@ -247,8 +247,10 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     // Check whether the received blocks indeed form a three-chain
     if (!((blk2->get_height() == blk1->get_height() + 1) && (blk1->get_height() == blk->get_height() + 1))) return;
 
+    auto parents2 = blk2->get_parents();
+    auto parents1 = blk1->get_parents();
     // Sanity check
-    if (!((blk2->parents[0] == blk1) && (blk1->parents[0] == blk))) return;
+    if (!((blk2->parents2[0] == blk1) && (blk1->parents1[0] == blk))) return;
 
     blks_received.insert(std::make_pair(blk->get_hash(), blk));
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
