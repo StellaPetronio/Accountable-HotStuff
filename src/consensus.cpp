@@ -148,8 +148,8 @@ void HotStuffCore::update(const block_t &nblk) {
         for (size_t i = 0; i < blk->cmds.size(); i++){
             do_decide(Finality(id, 1, i, blk->height,
                 blk->cmds[i], blk->get_hash()));
-            periodicalCheck_conflicting();
-            periodicalCheck_invalid_unlocking(blk2);
+            //periodicalCheck_conflicting();
+            //periodicalCheck_invalid_unlocking(blk2);
         }
             
     }
