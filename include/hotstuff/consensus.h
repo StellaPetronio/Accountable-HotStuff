@@ -136,6 +136,7 @@ class HotStuffCore {
 
     /*for accountable*/
     virtual void do_broadcast_committed(const ChainCommitted &chain) = 0;
+    virtual void do_broadcast_proof(const Proof &proof) = 0;
 
     /* The user plugs in the detailed instances for those
      * polymorphic data types. */
