@@ -275,7 +275,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     const uint256_t hash_blk2 = blk2->get_hash();
 
     //std::unordered_map<const uint256_t, block_t>::const_iterator got = blks_received_local.find(hash_blk2);
-    auto search = blks_received_local(hash_blk2);
+    auto search = blks_received_local.find(hash_blk2);
     if(search != blks_received_local.end()){
         periodicalCheck_invalid_unlocking(storage->get_blk_cache(), search->second);
     }
