@@ -218,25 +218,13 @@ bool HotStuffBase::conflicting(const block_t &blkA, const block_t &blkB){
 }
 
 bool HotStuffBase::check_lastBlockChain(const block_t &blk1, const block_t &blk2){
-    if(blk1->get_height() == blk2->get_height() && blk1->get_qc_ref() == blk2->get_qc_ref() && blk1->get_qc() == blk2->get_qc()){
-        return true;
-    }
-    else{
-        return false;
-    }
+    return (blk1->get_height() == blk2->get_height() && blk1->get_qc_ref() == blk2->get_qc_ref() && blk1->get_qc() == blk2->get_qc());
 }
 
 bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
-    bool invalid = false;
-    std::vector<block_t> parentsA = blkA->get_parents();
-    //if((check_lastBlockChain(blkB, get_blk2())) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){
-    if((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2))){   
-        invalid = true;
-        return invalid;
-    }
-    else {
-        return invalid;
-    }
+    auto parentsA = blkA->get_parents();
+    //return((check_lastBlockChain(blkB, get_blk2())) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2)));
+    return ((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2)));   
 }
 
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
@@ -303,9 +291,9 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
     for(auto it_1 = voted_blk1.begin(); it_1 != voted_blk1.end(); it_1++){
         for(auto it_2 = voted_blk2.begin(); it_2 != voted_blk2.end(); it_2++){
             if (*it_1 == *it_2)
-                {
-                    LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
-                }
+            {
+                LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
+            }
         }
     }
 }

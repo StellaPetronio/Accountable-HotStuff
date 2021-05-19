@@ -198,7 +198,7 @@ void HotStuffCore::on_receive_chain(const ChainCommitted &chain){
 
 void HotStuffCore::on_receive_proof(const Proof &proof){
     LOG_PROTO("got %s", std::string(proof).c_str());
-    on_receive_chain_(proof);
+    on_receive_proof_(proof);
 }
 
 
