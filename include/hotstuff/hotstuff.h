@@ -222,8 +222,8 @@ class HotStuffBase: public HotStuffCore {
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
     void periodicalCheck_conflicting(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
-    void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
-    //void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const block_t &);
+    //void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const std::unordered_map<const uint256_t, block_t> &);
+    void periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &, const block_t &);
     bool check_lastBlockChain(const block_t &blk1, const block_t &blk2);
 
     protected:
