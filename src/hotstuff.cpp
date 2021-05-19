@@ -324,12 +324,12 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
                 }
             }
         }
-    }
-     
+    } 
 }
 
 void HotStuffBase::periodicalCheck_conflicting() {
     auto blk_cache = storage->get_blk_cache();
+    auto blks_received = get_blks_received();
     for(auto &i : blk_cache){
         for(auto &j : blks_received){
             if(conflicting(i.second,j.second)){
