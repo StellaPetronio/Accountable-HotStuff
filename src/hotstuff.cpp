@@ -337,34 +337,6 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
     }
 }
 
-
-// void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const std::unordered_map<const uint256_t, block_t> &blks_rec){
-//     for(auto &i : blk_cache){
-//         for(auto &j : blks_rec){
-//             if(invalid_unlocking(i.second, j.second)){
-//                 LOG_WARN("Find an invalid unlocking!");
-//                 //calculate the proof of culpability 
-//                 block_t blk_i = i.second;
-//                 block_t blk_j = j.second;
-//                 std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
-//                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
-//                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
-//                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
-//                         if (*it_i == *it_j)
-//                         {
-//                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
-//                         }
-//                     }
-//                 }
-//                 return;
-//             }
-//             else{
-//                 LOG_INFO("Everything is fine!");
-//             }
-//         }
-//     }
-// }
-
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
     const PeerId &peer = conn->get_peer_id();
     if (peer.is_null()) return;
