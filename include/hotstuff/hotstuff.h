@@ -153,6 +153,10 @@ class HotStuffBase: public HotStuffCore {
     using Net = PeerNetwork<opcode_t>;
     using commit_cb_t = std::function<void(const Finality &)>;
 
+
+    void periodicalCheck_conflicting();
+    void periodicalCheck_invalid_unlocking(const block_t &);
+
     protected:
     /** the binding address in replica network */
     NetAddr listen_addr;
@@ -183,8 +187,7 @@ class HotStuffBase: public HotStuffCore {
     std::queue<uint256_t> cmd_pending_buffer;
 
     std::unordered_map<const uint256_t, block_t> blks_received;
-    std::unordered_map<const uint256_t, block_t> blks2_received;
-
+    
     /* statistics */
     uint64_t fetched;
     uint64_t delivered;
@@ -201,9 +204,6 @@ class HotStuffBase: public HotStuffCore {
     mutable double part_delivery_time_max;
     mutable std::unordered_map<const PeerId, uint32_t> part_fetched_replica;
 
-    void periodicalCheck_conflicting();
-    void periodicalCheck_invalid_unlocking(const block_t &);
-    
     void on_fetch_cmd(const command_t &cmd);
     void on_fetch_blk(const block_t &blk);
     bool on_deliver_blk(const block_t &blk);
