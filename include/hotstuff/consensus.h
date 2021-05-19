@@ -212,7 +212,7 @@ struct Proof: public Serializable{
           << "blk2_conflict=" << get_hex10(blk2_conflict->get_hash()) << ">";
         return s;
     }
-}
+};
 
 /** Abstraction for chain committed. */
 struct ChainCommitted: public Serializable {
