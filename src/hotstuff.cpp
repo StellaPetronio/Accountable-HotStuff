@@ -319,7 +319,7 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
                 //calculate the proof of culpability 
                 block_t blk_i = i.second;
                 std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
-                std::unordered_set<ReplicaID> voted_2 = blk_2-> get_voted();
+                std::unordered_set<ReplicaID> voted_2 = blk2->get_voted();
                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
                     for(auto it_2 = voted_2.begin(); it_2 != voted_2.end(); it_2++){
                         if (*it_i == *it_2)
