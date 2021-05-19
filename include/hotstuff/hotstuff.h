@@ -232,8 +232,8 @@ class HotStuffBase: public HotStuffCore {
     void do_broadcast_committed(const ChainCommitted &) override;
     void do_broadcast_proof(const Proof &) override;
     
-    bool conflicting(const block_t &blk, const block_t &blk_);
-    bool invalid_unlocking(const block_t &blk, const block_t &blk_);
+    bool conflicting(const block_t &blk, const block_t &blk_) override;
+    bool invalid_unlocking(const block_t &blk, const block_t &blk_) override;
 
     protected:
 
@@ -263,7 +263,6 @@ class HotStuffBase: public HotStuffCore {
     size_t size() const { return peers.size(); }
     const auto &get_decision_waiting() const { return decision_waiting; }
     size_t get_blks_received_size() { return blks_received.size(); }
-    size_t get_blks2_received_size() { return blks2_received.size(); }
     const auto get_blks_received() { return blks_received; }
     ThreadCall &get_tcall() { return tcall; }
     PaceMaker *get_pace_maker() { return pmaker.get(); }

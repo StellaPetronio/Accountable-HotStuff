@@ -138,6 +138,9 @@ class HotStuffCore {
     virtual void do_broadcast_committed(const ChainCommitted &chain) = 0;
     virtual void do_broadcast_proof(const Proof &proof) = 0;
 
+    virtual bool conflicting(const block_t &blk, const block_t &blk_) = 0;
+    virtual bool invalid_unlocking(const block_t &blk, const block_t &blk_) = 0;
+
     /* The user plugs in the detailed instances for those
      * polymorphic data types. */
     public:
