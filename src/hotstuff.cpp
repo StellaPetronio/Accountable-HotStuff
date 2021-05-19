@@ -217,13 +217,8 @@ bool HotStuffBase::conflicting(const block_t &blkA, const block_t &blkB){
     return ((blkA->get_height() == blkB->get_height()) && (blkA->get_hash() != blkB->get_hash()));
 }
 
-bool HotStuffBase::check_lastBlockChain(const block_t &blk1, const block_t &blk2){
-    return (blk1->get_height() == blk2->get_height() && blk1->get_qc_ref() == blk2->get_qc_ref() && blk1->get_qc() == blk2->get_qc());
-}
-
 bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
     auto parentsA = blkA->get_parents();
-    //return((check_lastBlockChain(blkB, get_blk2())) && (blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2)));
     return ((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2)));   
 }
 
@@ -307,31 +302,32 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
     // check whether the votes are "valid"
     if (!blk1_conflict->verify(this)) return;
     if (!blk2_conflict->verify(this)) return;
-
     
     // check that these two blocks indeed are a proof of misbehavior
-
     // 1) conflicting
     // 2) invalid unlocking
-    if(blk1_conflict->get_height() == blk2_conflict->get_height()){
+    if(conflicting(blk1_conflict,blk2_conflict)){
         for(auto it_1 = voted_blk1.begin(); it_1 != voted_blk1.end(); it_1++){
             for(auto it_2 = voted_blk2.begin(); it_2 != voted_blk2.end(); it_2++){
                 if (*it_1 == *it_2)
                 {
-                    LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
+                    return LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
+                }
+            }
+        }
+    }
+    if(invalid_unlocking(blk1_conflict,blk2_conflict)){
+        for(auto it_1 = voted_blk1.begin(); it_1 != voted_blk1.end(); it_1++){
+            for(auto it_2 = voted_blk2.begin(); it_2 != voted_blk2.end(); it_2++){
+                if (*it_1 == *it_2)
+                {
+                    return LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
                 }
             }
         }
     }
 
-    for(auto it_1 = voted_blk1.begin(); it_1 != voted_blk1.end(); it_1++){
-        for(auto it_2 = voted_blk2.begin(); it_2 != voted_blk2.end(); it_2++){
-            if (*it_1 == *it_2)
-            {
-                LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
-            }
-        }
-    }
+    
 }
 
 void HotStuffBase::periodicalCheck_conflicting() {
