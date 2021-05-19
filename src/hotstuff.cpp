@@ -89,6 +89,43 @@ void MsgRespBlock::postponed_parse(HotStuffCore *hsc) {
     }
 }
 
+void HotStuffBase::periodicalCheck_conflicting() {
+    auto blk_cache = storage->get_blk_cache();
+    auto blks_received = get_blks_received();
+    for(auto &i : blk_cache){
+        for(auto &j : blks_received){
+            if(conflicting(i.second,j.second)){
+                LOG_WARN("Found a conflict!");
+                Proof proof(i.second,j.second,this);
+                on_receive_proof(proof);
+                /* broadcast to all replicas */
+                do_broadcast_proof(proof);
+            }
+            else{
+                LOG_INFO("Everything is fine!");
+            }
+        }
+    }
+}
+
+void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
+    auto blk_cache = storage->get_blk_cache();
+    for(auto &i : blk_cache){
+        if(invalid_unlocking(i.second, blk2)){
+            LOG_WARN("Found an invalid unlocking!");
+            //calculate the proof of culpability 
+            Proof proof(i.second,blk2,this);
+            on_receive_proof(proof);
+            /* broadcast to all replicas */
+            do_broadcast_proof(proof);
+        }
+        else{
+            LOG_INFO("Everything is fine!");
+        }
+    }
+}
+
+
 // TODO: improve this function
 void HotStuffBase::exec_command(uint256_t cmd_hash, commit_cb_t callback) {
     cmd_pending.enqueue(std::make_pair(cmd_hash, callback));
