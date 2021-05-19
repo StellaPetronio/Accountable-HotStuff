@@ -256,22 +256,35 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     blks_received.insert(std::make_pair(blk1->get_hash(), blk1));
     blks_received.insert(std::make_pair(blk2->get_hash(), blk2));
     
-    // std::unordered_map<const uint256_t, block_t> blks_received_local;
-    // blks_received_local.insert(std::make_pair(blk->get_hash(), blk));
-    // blks_received_local.insert(std::make_pair(blk1->get_hash(), blk1));
-    // blks_received_local.insert(std::make_pair(blk2->get_hash(), blk2));
-
     LOG_INFO("blks_received: %lu", get_blks_received_size()); 
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     periodicalCheck_conflicting();
-    //periodicalCheck_invalid_unlocking(storage->get_blk_cache(), blks_received);
     
-    auto search = blks_received.find(blk2->get_hash());
-    if(search != blks_received.end()){
-        periodicalCheck_invalid_unlocking(storage->get_blk_cache(), search->second);
-    }
-    else{
-         LOG_INFO("Not found");
+    for(auto &blk : blks_received){
+        auto blk2 = blk.second;
+        auto parents_blk2 = blk.second->get_parents();
+        auto search_blk1 = blks_received.find(parents_blk2[0]->get_hash());
+        if(search_blk1 == blks_received.end()){
+            return;
+        }
+        else{
+            //auto blk1 = search_blk1.second;
+            auto blk1 = parents_blk2[0];
+            auto parents_blk1 = blk1->get_parents();
+            auto search_blk = blks_received.find(parents_blk1[0]->get_hash());
+            if(search_blk == blks_received.end()){
+                return;
+            }else{
+                //auto blk = search_blk.second;
+                auto blk = parents_blk1[0];
+            }
+        }
+
+        //check the heights in order to see if they form a chain
+        if (!((blk2->get_height() == blk1->get_height() + 1) && (blk1->get_height() == blk->get_height() + 1))) return;
+        //stop whenever you find a faulty guy
+        periodicalCheck_invalid_unlocking(blk2);
+
     }
 }
 
@@ -290,6 +303,27 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
 
     auto voted_blk1 = blk1_conflict->get_voted();
     auto voted_blk2 = blk2_conflict->get_voted();
+    
+    // check whether the votes are "valid"
+    if (!blk1_conflict->verify(this)) return;
+    if (!blk2_conflict->verify(this)) return;
+
+    
+    // check that these two blocks indeed are a proof of misbehavior
+
+    // 1) conflicting
+    // 2) invalid unlocking
+    if(blk1_conflict->get_height() == blk2_conflict->get_height()){
+        for(auto it_1 = voted_blk1.begin(); it_1 != voted_blk1.end(); it_1++){
+            for(auto it_2 = voted_blk2.begin(); it_2 != voted_blk2.end(); it_2++){
+                if (*it_1 == *it_2)
+                {
+                    LOG_WARN("Faulty replica: %s", std::to_string(*it_1));
+                }
+            }
+        }
+    }
+
     for(auto it_1 = voted_blk1.begin(); it_1 != voted_blk1.end(); it_1++){
         for(auto it_2 = voted_blk2.begin(); it_2 != voted_blk2.end(); it_2++){
             if (*it_1 == *it_2)
@@ -306,8 +340,6 @@ void HotStuffBase::periodicalCheck_conflicting() {
         for(auto &j : blks_received){
             if(conflicting(i.second,j.second)){
                 LOG_WARN("Found a conflict!");
-                // another type of message we call PROOF
-                // put both blocks and send the message to everyone and that's it!
                 Proof proof(i.second,j.second,this);
                 on_receive_proof(proof);
                 /* broadcast to all replicas */
@@ -320,14 +352,12 @@ void HotStuffBase::periodicalCheck_conflicting() {
     }
 }
 
-void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const block_t &blk2){
+void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
+    auto blk_cache = storage->get_blk_cache();
     for(auto &i : blk_cache){
         if(invalid_unlocking(i.second, blk2)){
             LOG_WARN("Found an invalid unlocking!");
             //calculate the proof of culpability 
-            LOG_WARN("Found a conflict!");
-            // another type of message we call PROOF
-            // put both blocks and send the message to everyone and that's it!
             Proof proof(i.second,blk2,this);
             on_receive_proof(proof);
             /* broadcast to all replicas */
@@ -338,36 +368,6 @@ void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<co
         }
     }
 }
-
-
-
-// void HotStuffBase::periodicalCheck_invalid_unlocking(const std::unordered_map<const uint256_t, block_t> &blk_cache, const std::unordered_map<const uint256_t, block_t> &blks_rec){
-//     for(auto &i : blk_cache){
-//         for(auto &j : blks_rec){
-//             if(invalid_unlocking(i.second, j.second)){
-//                 LOG_WARN("Find an invalid unlocking!");
-//                 //calculate the proof of culpability 
-//                 block_t blk_i = i.second;
-//                 block_t blk_j = j.second;
-//                 std::unordered_set<ReplicaID> voted_i = blk_i-> get_voted();
-//                 std::unordered_set<ReplicaID> voted_j = blk_j-> get_voted();
-//                 for(auto it_i = voted_i.begin(); it_i != voted_i.end(); it_i++){
-//                     for(auto it_j = voted_j.begin(); it_j != voted_j.end(); it_j++){
-//                         if (*it_i == *it_j)
-//                         {
-//                             LOG_WARN("Faulty replica: %s", std::to_string(*it_i));
-//                         }
-//                     }
-//                 }
-//                 return;
-//             }
-//             else{
-//                 LOG_INFO("Everything is fine!");
-//             }
-//         }
-//     }
-// }
-
 
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
     const PeerId &peer = conn->get_peer_id();
