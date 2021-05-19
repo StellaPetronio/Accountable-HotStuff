@@ -196,6 +196,11 @@ void HotStuffCore::on_receive_chain(const ChainCommitted &chain){
     on_receive_chain_(chain);
 }
 
+void HotStuffCore::on_receive_proof(const Proof &proof){
+    LOG_PROTO("got %s", std::string(proof).c_str());
+    on_receive_chain_(proof);
+}
+
 
 void HotStuffCore::on_receive_proposal(const Proposal &prop) {
     LOG_PROTO("got %s", std::string(prop).c_str());
@@ -341,6 +346,12 @@ promise_t HotStuffCore::async_wait_receive_chain() {
     });
 }
 
+promise_t HotStuffCore::async_wait_receive_proof() {
+    return receive_proof_waiting.then([](const Proof &proof) {
+        return proof;
+    });
+}
+
 promise_t HotStuffCore::async_hqc_update() {
     return hqc_update_waiting.then([this]() {
         return hqc.first;
@@ -363,6 +374,12 @@ void HotStuffCore::on_receive_chain_(const ChainCommitted &chain) {
     auto t = std::move(receive_chain_waiting);
     receive_chain_waiting = promise_t();
     t.resolve(chain);
+}
+
+void HotStuffCore::on_receive_proof_(const Proof &proof) {
+    auto t = std::move(receive_proof_waiting);
+    receive_proof_waiting = promise_t();
+    t.resolve(proof);
 }
 
 void HotStuffCore::on_hqc_update() {
