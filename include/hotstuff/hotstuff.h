@@ -207,7 +207,7 @@ class HotStuffBase: public HotStuffCore {
 
     /** for accountability: deliver consensus message: <committed> */
     inline void committed_handler(MsgCommitted &&, const Net::conn_t &);
-    inline void proof_handler(MsgCommitted &&, const Net::conn_t &);
+    inline void proof_handler(MsgProof &&, const Net::conn_t &);
 
     /** deliver consensus message: <propose> */
     inline void propose_handler(MsgPropose &&, const Net::conn_t &);
