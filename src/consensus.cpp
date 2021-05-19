@@ -149,7 +149,7 @@ void HotStuffCore::update(const block_t &nblk) {
             do_decide(Finality(id, 1, i, blk->height,
                 blk->cmds[i], blk->get_hash()));
             periodicalCheck_conflicting();
-            //periodicalCheck_invalid_unlocking()
+            periodicalCheck_invalid_unlocking(blk2);
         }
             
     }

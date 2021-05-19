@@ -255,9 +255,9 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     LOG_INFO("blk_cache: %lu", storage->get_blk_cache_size());
     periodicalCheck_conflicting();
     
-    for(auto &blk : blks_received){
-        auto blk2 = blk.second;
-        auto parents_blk2 = blk.second->get_parents();
+    for(auto &blk_ : blks_received){
+        auto blk2 = blk_.second;
+        auto parents_blk2 = blk_.second->get_parents();
         auto search_blk1 = blks_received.find(parents_blk2[0]->get_hash());
         if(search_blk1 == blks_received.end()){
             return;
