@@ -45,42 +45,6 @@ HotStuffCore::HotStuffCore(ReplicaID id,
     storage->add_blk(b0);
 }
 
-void HotStuffBase::periodicalCheck_conflicting() {
-    auto blk_cache = storage->get_blk_cache();
-    auto blks_received = get_blks_received();
-    for(auto &i : blk_cache){
-        for(auto &j : blks_received){
-            if(conflicting(i.second,j.second)){
-                LOG_WARN("Found a conflict!");
-                Proof proof(i.second,j.second,this);
-                on_receive_proof(proof);
-                /* broadcast to all replicas */
-                do_broadcast_proof(proof);
-            }
-            else{
-                LOG_INFO("Everything is fine!");
-            }
-        }
-    }
-}
-
-void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
-    auto blk_cache = storage->get_blk_cache();
-    for(auto &i : blk_cache){
-        if(invalid_unlocking(i.second, blk2)){
-            LOG_WARN("Found an invalid unlocking!");
-            //calculate the proof of culpability 
-            Proof proof(i.second,blk2,this);
-            on_receive_proof(proof);
-            /* broadcast to all replicas */
-            do_broadcast_proof(proof);
-        }
-        else{
-            LOG_INFO("Everything is fine!");
-        }
-    }
-}
-
 void HotStuffCore::sanity_check_delivered(const block_t &blk) {
     if (!blk->delivered)
         throw std::runtime_error("block not delivered");
@@ -316,6 +280,42 @@ void HotStuffCore::on_init(uint32_t nfaulty) {
     b0->self_qc = b0->qc->clone();
     b0->qc_ref = b0;
     hqc = std::make_pair(b0, b0->qc->clone());
+}
+
+void HotStuffBase::periodicalCheck_conflicting() {
+    auto blk_cache = storage->get_blk_cache();
+    auto blks_received = get_blks_received();
+    for(auto &i : blk_cache){
+        for(auto &j : blks_received){
+            if(conflicting(i.second,j.second)){
+                LOG_WARN("Found a conflict!");
+                Proof proof(i.second,j.second,this);
+                on_receive_proof(proof);
+                /* broadcast to all replicas */
+                do_broadcast_proof(proof);
+            }
+            else{
+                LOG_INFO("Everything is fine!");
+            }
+        }
+    }
+}
+
+void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
+    auto blk_cache = storage->get_blk_cache();
+    for(auto &i : blk_cache){
+        if(invalid_unlocking(i.second, blk2)){
+            LOG_WARN("Found an invalid unlocking!");
+            //calculate the proof of culpability 
+            Proof proof(i.second,blk2,this);
+            on_receive_proof(proof);
+            /* broadcast to all replicas */
+            do_broadcast_proof(proof);
+        }
+        else{
+            LOG_INFO("Everything is fine!");
+        }
+    }
 }
 
 void HotStuffCore::prune(uint32_t staleness) {
