@@ -39,6 +39,7 @@ using salticidae::_2;
 const double ent_waiting_timeout = 10;
 const double double_inf = 1e10;
 
+/* For accoutability */
 struct MsgProof {
     static const opcode_t opcode = 0x2;
     DataStream serialized;
@@ -48,6 +49,7 @@ struct MsgProof {
     void postponed_parse(HotStuffCore *hsc);
 };
 
+/* For accoutability */
 /** Network message format for Accoutable HotStuff. */
 struct MsgCommitted {
     static const opcode_t opcode = 0x4;
@@ -181,7 +183,7 @@ class HotStuffBase: public HotStuffCore {
     using cmd_queue_t = salticidae::MPSCQueueEventDriven<std::pair<uint256_t, commit_cb_t>>;
     cmd_queue_t cmd_pending;
     std::queue<uint256_t> cmd_pending_buffer;
-
+    /* For accountability */
     std::unordered_map<const uint256_t, block_t> blks_received;
     
     /* statistics */
@@ -204,8 +206,9 @@ class HotStuffBase: public HotStuffCore {
     void on_fetch_blk(const block_t &blk);
     bool on_deliver_blk(const block_t &blk);
 
-    /** for accountability: deliver consensus message: <committed> */
+    /** For accountability: deliver consensus message: <committed> */
     inline void committed_handler(MsgCommitted &&, const Net::conn_t &);
+    /** For accountability: deliver consensus message: <proof> */
     inline void proof_handler(MsgProof &&, const Net::conn_t &);
 
     /** deliver consensus message: <propose> */
@@ -224,14 +227,17 @@ class HotStuffBase: public HotStuffCore {
     void do_decide(Finality &&) override;
     void do_consensus(const block_t &blk) override;
 
-     /* For accountability */
+    /* For accountability */
     void do_broadcast_committed(const ChainCommitted &) override;
+    /* For accountability */
     void do_broadcast_proof(const Proof &) override;
-
+    /* For accountability */
     void periodicalCheck_conflicting() override;
+    /* For accountability */
     void periodicalCheck_invalid_unlocking(const block_t &blk2) override;
-    
+    /* For accountability */
     bool conflicting(const block_t &blk, const block_t &blk_);
+    /* For accountability */
     bool invalid_unlocking(const block_t &blk, const block_t &blk_);
 
     protected:

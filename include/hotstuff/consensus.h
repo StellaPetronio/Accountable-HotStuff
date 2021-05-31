@@ -32,7 +32,10 @@ namespace hotstuff {
 struct Proposal;
 struct Vote;
 struct Finality;
+
+/* For accoutability */
 struct ChainCommitted;
+/* For accoutability */
 struct Proof;
 
 /** Abstraction for HotStuff protocol state machine (without network implementation). */
@@ -51,10 +54,14 @@ class HotStuffCore {
     /* === async event queues === */
     std::unordered_map<block_t, promise_t> qc_waiting;
     promise_t propose_waiting;
-    promise_t receive_chain_waiting;
-    promise_t receive_proof_waiting;
     promise_t receive_proposal_waiting;
     promise_t hqc_update_waiting;
+
+    /* For accoutability */
+    promise_t receive_chain_waiting;
+    /* For accoutability */
+    promise_t receive_proof_waiting;
+
     /* == feature switches == */
     /** always vote negatively, useful for some PaceMakers */
     bool vote_disabled;
@@ -67,7 +74,10 @@ class HotStuffCore {
     void on_qc_finish(const block_t &blk);
     void on_propose_(const Proposal &prop);
     void on_receive_proposal_(const Proposal &prop);
+
+    /* For accoutability */
     void on_receive_chain_(const ChainCommitted &chian);
+    /* For accoutability */
     void on_receive_proof_(const Proof &proof);
 
     protected:
@@ -97,7 +107,14 @@ class HotStuffCore {
      * @return true if valid */
     bool on_deliver_blk(const block_t &blk);
 
+    /* For accoutability */
+    /** Call upon the delivery of a chaincommitted message.
+     * The block mentioned in the message should be already delivered. */
     void on_receive_chain(const ChainCommitted &chain);
+
+    /* For accoutability */
+    /** Call upon the delivery of a proof message.
+     * The block mentioned in the message should be already delivered. */
     void on_receive_proof(const Proof &proof);
 
     /** Call upon the delivery of a proposal message.
@@ -134,11 +151,13 @@ class HotStuffCore {
      * while safety is always guaranteed by HotStuffCore. */
     virtual void do_vote(ReplicaID last_proposer, const Vote &vote) = 0;
 
-    /*for accountable*/
+    /* For accoutability */
     virtual void do_broadcast_committed(const ChainCommitted &chain) = 0;
+     /* For accoutability */
     virtual void do_broadcast_proof(const Proof &proof) = 0;
-
+     /* For accoutability */
     virtual void periodicalCheck_conflicting() = 0;
+     /* For accoutability */
     virtual void periodicalCheck_invalid_unlocking(const block_t &blk2) = 0;
 
     /* The user plugs in the detailed instances for those
@@ -173,7 +192,10 @@ class HotStuffCore {
     /** Get a promise resolved when hqc is updated. */
     promise_t async_hqc_update();
 
+    /* For accoutability */
+    /** Get a promise resolved when a chain proposal is received. */
     promise_t async_wait_receive_chain();
+    /** Get a promise resolved when a new proposal is received. */
     promise_t async_wait_receive_proof();
 
     /* Other useful functions */
@@ -187,6 +209,7 @@ class HotStuffCore {
     void set_vote_disabled(bool f) { vote_disabled = f; }
 };
 
+/* For accoutability: abstraction for calculate the proof of culpability */
 struct Proof: public Serializable{
     block_t blk1_conflict, blk2_conflict;
     HotStuffCore *hsc;
@@ -218,7 +241,7 @@ struct Proof: public Serializable{
     }
 };
 
-/** Abstraction for chain committed. */
+/** For accoutability: abstraction for chain committed. */
 struct ChainCommitted: public Serializable {
     /** chain being commited */
     block_t blk, blk1, blk2;
@@ -246,10 +269,6 @@ struct ChainCommitted: public Serializable {
         blk = hsc->storage->add_blk(std::move(_blk), hsc->get_config());
         blk1 = hsc->storage->add_blk(std::move(_blk1), hsc->get_config());
         blk2 = hsc->storage->add_blk(std::move(_blk2), hsc->get_config());
-    }
-
-    block_t get_blk2() {
-        return blk2;
     }
 
     operator std::string () const {
