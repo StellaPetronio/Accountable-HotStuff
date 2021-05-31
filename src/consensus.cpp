@@ -148,15 +148,14 @@ void HotStuffCore::update(const block_t &nblk) {
         LOG_PROTO("commit %s", std::string(*blk).c_str());
         for (size_t i = 0; i < blk->cmds.size(); i++){
             do_decide(Finality(id, 1, i, blk->height, blk->cmds[i], blk->get_hash()));
+            /* For accoutability */
             periodicalCheck_conflicting();
             periodicalCheck_invalid_unlocking(blk2);
-        }
-
-            
+        }       
     }
     b_exec = blk;
 
-    // For accountability: send blk, blk1, blk2 to all
+    /* For accoutability: send blk, blk1, blk2 to all  */
     /* create the chain */
     ChainCommitted chain(blk, blk1, blk2, this);
     on_receive_chain(chain);
@@ -194,12 +193,13 @@ block_t HotStuffCore::on_propose(const std::vector<uint256_t> &cmds,
     return bnew;
 }
 
-
+/* For accoutability */
 void HotStuffCore::on_receive_chain(const ChainCommitted &chain){
     LOG_PROTO("got %s", std::string(chain).c_str());
     on_receive_chain_(chain);
 }
 
+/* For accoutability */
 void HotStuffCore::on_receive_proof(const Proof &proof){
     LOG_PROTO("got %s", std::string(proof).c_str());
     on_receive_proof_(proof);
@@ -223,6 +223,7 @@ void HotStuffCore::on_receive_proposal(const Proposal &prop) {
             opinion = true; // liveness condition
             vheight = bnew->height;
         }
+        /* For accoutability */
         // else
         // {   // safety condition (extend the locked branch)
         //     block_t b;
@@ -410,12 +411,14 @@ void HotStuffCore::on_receive_proposal_(const Proposal &prop) {
     t.resolve(prop);
 }
 
+/* For accoutability */
 void HotStuffCore::on_receive_chain_(const ChainCommitted &chain) {
     auto t = std::move(receive_chain_waiting);
     receive_chain_waiting = promise_t();
     t.resolve(chain);
 }
 
+/* For accoutability */
 void HotStuffCore::on_receive_proof_(const Proof &proof) {
     auto t = std::move(receive_proof_waiting);
     receive_proof_waiting = promise_t();

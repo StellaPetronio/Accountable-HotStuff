@@ -27,6 +27,7 @@ using salticidae::static_pointer_cast;
 
 namespace hotstuff {
 
+/* For accoutability */
 const opcode_t MsgProof::opcode;
 MsgProof::MsgProof(const Proof &proof) { serialized << proof; }
 void MsgProof::postponed_parse(HotStuffCore *hsc) {
@@ -34,6 +35,7 @@ void MsgProof::postponed_parse(HotStuffCore *hsc) {
     serialized >> proof;
 }
 
+/* For accoutability */
 const opcode_t MsgCommitted::opcode;
 MsgCommitted::MsgCommitted(const ChainCommitted &chain) { serialized << chain; }
 void MsgCommitted::postponed_parse(HotStuffCore *hsc) {
@@ -213,15 +215,18 @@ promise_t HotStuffBase::async_deliver_blk(const uint256_t &blk_hash,
     return static_cast<promise_t &>(pm);
 }
 
+/* For accoutability */
 bool HotStuffBase::conflicting(const block_t &blkA, const block_t &blkB){
     return ((blkA->get_height() == blkB->get_height()) && (blkA->get_hash() != blkB->get_hash()));
 }
 
+/* For accoutability */
 bool HotStuffBase::invalid_unlocking(const block_t &blkA, const block_t &blkB){
     auto parentsA = blkA->get_parents();
     return ((blkA->get_height() > blkB->get_height()) && (parentsA[0]->get_height() < ((blkB->get_height()) - 2)));   
 }
 
+/* For accoutability */
 void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn) {
     LOG_INFO("Committed message received!");
 
@@ -238,7 +243,6 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     block_t blk2 = chain_.blk2;
     if (!blk2) return;
 
-    // CHECK WHETHER THE RECEIVED BLOCKS CONSTITUTE A THREE-CHAIN
     // Check whether the received blocks indeed form a three-chain
     if (!((blk2->get_height() == blk1->get_height() + 1) && (blk1->get_height() == blk->get_height() + 1))) return;
 
@@ -282,6 +286,7 @@ void HotStuffBase::committed_handler(MsgCommitted &&msg, const Net::conn_t &conn
     }
 }
 
+/* For accoutability */
 void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
     LOG_INFO("Proof message received!");
 
@@ -302,7 +307,7 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
     if (!blk1_conflict->verify(this)) return;
     if (!blk2_conflict->verify(this)) return;
     
-    // check that these two blocks indeed are a proof of misbehavior
+    // check that these two blocks indeed are a proof of misbehaviour
     // 1) conflicting
     // 2) invalid unlocking
     if(conflicting(blk1_conflict,blk2_conflict)){
@@ -326,42 +331,6 @@ void HotStuffBase::proof_handler(MsgProof &&msg, const Net::conn_t &conn) {
         }
     } 
 }
-
-// void HotStuffBase::periodicalCheck_conflicting() {
-//     auto blk_cache = storage->get_blk_cache();
-//     auto blks_received = get_blks_received();
-//     for(auto &i : blk_cache){
-//         for(auto &j : blks_received){
-//             if(conflicting(i.second,j.second)){
-//                 LOG_WARN("Found a conflict!");
-//                 Proof proof(i.second,j.second,this);
-//                 on_receive_proof(proof);
-//                 /* broadcast to all replicas */
-//                 do_broadcast_proof(proof);
-//             }
-//             else{
-//                 LOG_INFO("Everything is fine!");
-//             }
-//         }
-//     }
-// }
-
-// void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
-//     auto blk_cache = storage->get_blk_cache();
-//     for(auto &i : blk_cache){
-//         if(invalid_unlocking(i.second, blk2)){
-//             LOG_WARN("Found an invalid unlocking!");
-//             //calculate the proof of culpability 
-//             Proof proof(i.second,blk2,this);
-//             on_receive_proof(proof);
-//             /* broadcast to all replicas */
-//             do_broadcast_proof(proof);
-//         }
-//         else{
-//             LOG_INFO("Everything is fine!");
-//         }
-//     }
-// }
 
 void HotStuffBase::propose_handler(MsgPropose &&msg, const Net::conn_t &conn) {
     const PeerId &peer = conn->get_peer_id();
@@ -523,8 +492,11 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
         part_delivery_time_max(0)
 {
     /* register the handlers for msg from replicas */
+    /* For accoutability */
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::proof_handler, this, _1, _2));
+    /* For accoutability */
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::committed_handler, this, _1, _2));
+
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::propose_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::vote_handler, this, _1, _2));
     pn.reg_handler(salticidae::generic_bind(&HotStuffBase::req_blk_handler, this, _1, _2));
@@ -541,10 +513,12 @@ HotStuffBase::HotStuffBase(uint32_t blk_size,
     pn.listen(listen_addr);
 }
 
+/* For accoutability */
 void HotStuffBase::do_broadcast_committed(const ChainCommitted &chain) {
     pn.multicast_msg(MsgCommitted(chain), peers);
 }
 
+/* For accoutability */
 void HotStuffBase::do_broadcast_proof(const Proof &proof) {
     pn.multicast_msg(MsgProof(proof), peers);
 }
@@ -584,6 +558,7 @@ void HotStuffBase::do_decide(Finality &&fin) {
     }
 }
 
+/* For accoutability */
 void HotStuffBase::periodicalCheck_conflicting() {
     auto blk_cache = storage->get_blk_cache();
     auto blks_received = get_blks_received();
@@ -603,6 +578,7 @@ void HotStuffBase::periodicalCheck_conflicting() {
     }
 }
 
+/* For accoutability */
 void HotStuffBase::periodicalCheck_invalid_unlocking(const block_t &blk2){
     auto blk_cache = storage->get_blk_cache();
     for(auto &i : blk_cache){
