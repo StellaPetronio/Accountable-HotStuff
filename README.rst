@@ -5,7 +5,7 @@ To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``c
 
 -Two new structures, ChainCommitted and Proof, have been declared and defined in the ``consensus.h`` script.
 
--Two structure representing two new network messages format, MsgCommitted and MsgProof, have been declared and defined, respectively, in the ``hotstuff.h`` and ``hotstuff.cpp``.
+-Two structures representing two new network messages format, MsgCommitted and MsgProof, have been declared and defined, respectively, in the ``hotstuff.h`` and ``hotstuff.cpp``.
 
 -Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
 
