@@ -1,7 +1,7 @@
 
 Accountable HotStuff
 --------------------
--We created two new structure `ChainCommitted`and `Proof` in the ``consensus.h`` script. 
+We created two new structure ChainCommitted and Proof in the ``consensus.h`` script. 
 
 
 
