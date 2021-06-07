@@ -9,11 +9,11 @@ To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``c
 
 -Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
 
--We implemented a void method periodicalCheck_conflicting and a void method periodicalCheck_invalid_unlocking, both in the ``hotstuff.cpp`` script. We declared them as an overridding methods. 
+-Two void methods periodicalCheck_conflicting and periodicalCheck_invalid_unlocking are defined in the ``hotstuff.cpp`` script and declared as an overridding methods. 
 
 -Two boolean methods conflicting and invalid_unlocking, to check if an unwanted scenario occurs, are declared and defined, respectiely, in the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
 
--
+-Two new handle methods, committed_handler and proof_handler are declared and defined in the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
 
 
 A detailed explanation can be found in the "Implementation" section of the report attached. 
