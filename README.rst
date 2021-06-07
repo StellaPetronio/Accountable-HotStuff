@@ -1,12 +1,22 @@
 
 Accountable HotStuff
 --------------------
-To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``consensus.cpp``, ``hotstuff.h`` and ``hotstuff.cpp`` scripts present some additional methods and structures with respect to the original version. 
+To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``consensus.cpp``, ``hotstuff.h`` and ``hotstuff.cpp`` scripts present some additional methods and structures with respect to the original version (more detailts in the . 
 
--Two new structures, ChainCommitted and Proof, have been declared and defined in the ``consensus.h`` script;
--Two structure representing two new network messages format, MsgCommitted and MsgProof, have been declared and defined, respectively, in the ``hotstuff.h`` and ``hotstuff.cpp``;
--Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts;
+-Two new structures, ChainCommitted and Proof, have been declared and defined in the ``consensus.h`` script.
 
+-Two structure representing two new network messages format, MsgCommitted and MsgProof, have been declared and defined, respectively, in the ``hotstuff.h`` and ``hotstuff.cpp``.
+
+-Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
+
+-We implemented a void method periodicalCheck_conflicting and a void method periodicalCheck_invalid_unlocking, both in the ``hotstuff.cpp`` script. We declared them as an overridding methods. 
+
+-Two boolean methods conflicting and invalid_unlocking, to check if an unwanted scenario occurs, are declared and defined, respectiely, in the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
+
+-
+
+
+A detailed explanation can be found in the "Implementation" section of the report attached. 
 
 
 
