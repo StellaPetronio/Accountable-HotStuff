@@ -1,10 +1,11 @@
 
 Accountable HotStuff
 --------------------
-To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``consensus.cpp``, ``hotstuff.h`` and ``hotstuff.cpp`` scripts present some additional methods and structures with respect to the original version, listed in the following. 
+To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``consensus.cpp``, ``hotstuff.h`` and ``hotstuff.cpp`` scripts present some additional methods and structures with respect to the original version. 
 
--The two new structures ChainCommitted and Proof have been declared and defined in the ``consensus.h`` script.
--
+-Two new structures, ChainCommitted and Proof, have been declared and defined in the ``consensus.h`` script;
+-Two structure representing two new network messages format, MsgCommitted and MsgProof, have been declared and defined, respectively, in the ``hotstuff.h`` and ``hotstuff.cpp``;
+-Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts;
 
 
 
