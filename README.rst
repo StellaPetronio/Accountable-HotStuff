@@ -19,7 +19,7 @@ To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``c
 
 -Two new handle methods, committed_handler and proof_handler are declared and defined in the ``hotstuff.h`` and ``hotstuff.cpp`` script.
 
--A new unordered_map blk_received has been declared as a private memeber of the HotStuffBase class in the ``hotstuff.h` script.
+-A new unordered_map blk_received has been declared as a private memeber of the HotStuffBase class in the ``hotstuff.h`` script.
 
 -Two new members, receive_chain_waiting and receive_proof_waiting, of type promise_t have been declared in the HotStuffCore class of the ``consensus.h`` script.
 
