@@ -9,14 +9,21 @@ To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``c
 
 -Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
 
+-Two new methods on_received_chain_ and on_received_proof_ have been declared and defined in the ``consensus.h`` and ``consensus.cpp`` script, respectiely.
+
 -Two void methods periodicalCheck_conflicting and periodicalCheck_invalid_unlocking are defined in the ``hotstuff.cpp`` script and declared as an overridding methods. 
 
--Two boolean methods conflicting and invalid_unlocking, to check if an unwanted scenario occurs, are declared and defined, respectiely, in the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
+-Two boolean methods conflicting and invalid_unlocking, to check if an unwanted scenario occurs, are declared and defined, respectiely, in the ``hotstuff.h`` and ``hotstuff.cpp`` script.
 
--Two new handle methods, committed_handler and proof_handler are declared and defined in the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
+-The safety condition part in the update method of the ``consensus.cpp`` script has been commented. 
 
+-Two new handle methods, committed_handler and proof_handler are declared and defined in the ``hotstuff.h`` and ``hotstuff.cpp`` script.
 
-A detailed explanation can be found in the "Implementation" section of the report attached. 
+-A new unordered_map blk_received has been declared as a private memeber of the HotStuffBase class in the ``hotstuff.h` script.
+
+-Two new members, receive_chain_waiting and receive_proof_waiting, of type promise_t have been declared in the HotStuffCore class of the ``consensus.h`` script.
+
+A detailed explanation can be found in the "Implementation" section of the report attached. Moreover, any additional part necessary for accountability is preceded by the comment '/* For accountability */'. 
 
 
 
