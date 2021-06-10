@@ -9,7 +9,7 @@ To achieve the accountability of the HotStuff protocol, the ``consensus.h``, ``c
 
 -Two new methods do_broadcast_committed and do_broadcast_proof are present in the the ``hotstuff.h`` and ``hotstuff.cpp`` scripts.
 
--Two new methods on_received_chain_ and on_received_proof_ have been declared and defined in the ``consensus.h`` and ``consensus.cpp`` script, respectiely.
+-Four new methods on_received_chain, on_received_proof,  on_received_chain_ and on_received_proof_ have been declared and defined in the ``consensus.h`` and ``consensus.cpp`` script, respectiely.
 
 -Two void methods periodicalCheck_conflicting and periodicalCheck_invalid_unlocking are defined in the ``hotstuff.cpp`` script and declared as an overridding methods. 
 
